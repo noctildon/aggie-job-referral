@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.contrib.auth import views as auth_views
 from . import views
 
 
@@ -25,6 +26,11 @@ urlpatterns = [
     # Use name='URL' to set url is 'URL', which can be used in html tempdate: action="{% url 'count' %}"
     path('count/', views.count, name='count'),
     path('eggs/', views.eggs),
-    path('about/', views.about, name='about')
+    path('about/', views.about, name='about'),
 
+    # auth
+    path('userhome/', views.userhome, name='userhome'),
+    path('register/', views.register, name='register'),
+    path('login/', auth_views.LoginView.as_view(), name='login'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout')
 ]

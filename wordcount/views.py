@@ -1,11 +1,14 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, redirect, reverse
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.decorators import login_required
 
 
 def home(request):
     # return HttpResponse('Hello')  # return a string 'Hello'
-    return render(request, 'home.html', {'mes': 'Type some words in the box below'})  # return a html file (written in the templates/)
-
+    # return a html file (written in the templates/)
+    return render(request, 'home.html', {'mes': 'Type some words in the box below'})
 
 def eggs(request):
     # retunr html
@@ -27,3 +30,22 @@ def count(request):
 
 def about(request):
     return render(request, 'about.html')
+
+
+@login_required
+def userhome(request):
+    return render(request, "registration/success.html", {})
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            form.save()
+            username = form.cleaned_data.get('username')
+            password = form.cleaned_data.get('password1')
+            user = authenticate(username = username, password = password)
+            login(request, user)
+            return redirect('userhome')
+    else:
+        form = UserCreationForm()
+    return render(request, 'registration/register.html', {'form': form})

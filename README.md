@@ -13,4 +13,11 @@
 ## Todos
 - [x] create clickable static webpage
 - [x] deploy on heroku
-- [ ] create account system: register, login, logout, etc
+- [x] create account system: register, login, logout, etc
+
+
+<figure class="video_container">
+  <video controls="true" allowfullscreen="true">
+    <source src="./loginlogout-demo.webm" type="video/webm">
+  </video>
+</figure>
