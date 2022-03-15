@@ -10,14 +10,7 @@
 6. python manage.py migrate
 7. python manage.py runserver
 
+* You may need to create a SECRET_KEY in settings.py
+
 ## Todos
-- [x] create clickable static webpage
-- [x] deploy on heroku
-- [x] create account system: register, login, logout, etc
-
-
-<figure class="video_container">
-  <video controls="true" allowfullscreen="true">
-    <source src="./loginlogout-demo.webm" type="video/webm">
-  </video>
-</figure>
+- [] Test deploy on heroku
