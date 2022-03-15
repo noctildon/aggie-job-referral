@@ -11,16 +11,24 @@
 7. python manage.py runserver
 8. Open the url 127.0.0.1:8000 (or any url returned by python prompt)
 
-* You may need to create a .env file in  aggie-job-referral/(or AggieJobReferral/) with content like,
+* You may need to create a .env file in  aggie-job-referral/ (or AggieJobReferral/) with content like,
 
 ```
 SECRET_KEY=AAAABBBBCCCCDDDD12341234=
 ```
-where SECRET_KEY should end with =, and DO NOT share it with anyone.
-Try this online key generator [CodeIgniter Encryption Keys](https://randomkeygen.com/#ci_key).
+where SECRET_KEY should end with =. DO NOT share with anyone.
+Try this online key generator [CodeIgniter Encryption Keys](https://randomkeygen.com/#ci_key), then add an equal sign at the end.
 
-When everthing works, you should be able to see this
+If everthing works, you should be able to see this
 ![](demo_screenshot.png)
+
+
+## Django admin
+1. Create an admin by `python manage.py createsuperuser`
+2. Go to 127.0.0.1:8000/admin then enter the credentials
+3. Enjoy the power of admin
+
+see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/intro/tutorial02/#creating-an-admin-user)
 
 
 ## Todos
