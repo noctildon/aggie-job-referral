@@ -2,18 +2,12 @@
 {% load static%}
 
 {% block content %}
-<head>
-    <style>
-        .box{
-            border:5px solid black;
-        }
-    </style>
-</head>
-<div class=" box jumbotron container">
+<h1>Apply</h1>
+<div class="container">
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
-        <input type="submit" class="btn btn-success btn-sm" value="submit">
+        <input type="submit" class="btn btn-success" value="submit">
     </form>
 </div>
 {% endblock %}
