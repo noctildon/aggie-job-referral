@@ -1,0 +1,13 @@
+bin/
+include/
+lib/
+share/
+pip-selfcheck.json
+__pycache__/
+**/__pycache__/
+db.sqlite3
+.env
+
+members.json
+.vscode/
+mynote.txt
