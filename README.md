@@ -5,12 +5,11 @@
 1. Install git, python, and pip
 2. git clone https://github.com/aggie-coding-club/aggie-job-referral
 3. cd aggie-job-referral
-4. git checkout forum
-5. pip install -r requirements.txt
-6. python manage.py migrate --run-syncdb
-7. python manage.py loaddata dump.json
-8. python manage.py runserver
-9. Open the url 127.0.0.1:8000 (or any url returned by the prompt)
+4. pip install -r requirements.txt
+5. python manage.py migrate --run-syncdb
+6. python manage.py loaddata dump.json
+7. python manage.py runserver
+8. Open the url 127.0.0.1:8000 (or any url returned by the prompt)
 
 * You may need to create a .env file in  aggie-job-referral/ (or AggieJobReferral/) with the content like,
 ```
