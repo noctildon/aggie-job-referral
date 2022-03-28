@@ -39,6 +39,23 @@ def loginUser(request):
        return render(request,'login.html')
 
 
+
+def registerCandidate(request):
+    if request.user.is_authenticated:
+        return redirect('home')
+    else:
+        Form = CandidateCreationForm()
+        if request.method == 'POST':
+            Form = CandidateCreationForm(request.POST)
+            if Form.is_valid():
+                currUser=Form.save()
+                Candidates.objects.create(name=currUser.username,email=currUser.email)
+                return redirect('login')
+        context = {'form': Form}
+        return render(request,'register.html',context)
+
+
+# company registration
 def registerUser(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -50,9 +67,7 @@ def registerUser(request):
                 currUser=Form.save()
                 Company.objects.create(user=currUser,name=currUser.username)
                 return redirect('login')
-        context = {
-            'form':Form
-        }
+        context = {'form': Form}
         return render(request,'register.html',context)
 
 
