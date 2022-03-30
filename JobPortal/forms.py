@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from .models import *
 from django import forms
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, AbstractUser
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
@@ -11,6 +11,15 @@ class CandidateCreationForm(UserCreationForm):
     email = forms.EmailField(label='email')
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    dob = forms.DateField(label='dob')
+    is_company = forms.BooleanField(label='Are you a company? check if yes',required=False)
+
+    class Meta:
+    # class Meta(UserCreationForm.Meta):
+        # model = Candidates
+        model = User
+        fields = ('username', 'email', 'password1', 'dob', 'is_company')
+        # fields = UserCreationForm.Meta.fields + fields
 
     def username_clean(self):
         username = self.cleaned_data['username'].lower()
@@ -34,11 +43,15 @@ class CandidateCreationForm(UserCreationForm):
             raise ValidationError("Password don't match")
         return password2
 
-    def save(self):
+    def save(self, *args, **kwargs):
         user = User.objects.create_user(
             self.cleaned_data['username'],
-            self.cleaned_data['email'],
-            self.cleaned_data['password1']
+            email=self.cleaned_data['email'],
+            password=self.cleaned_data['password1'],
+
+            # BUG: TypeError: User() got an unexpected keyword argument 'dob'
+            # dob=self.cleaned_data['dob'],
+            # is_company=self.cleaned_data['is_company']
         )
         return user
 
@@ -46,4 +59,4 @@ class CandidateCreationForm(UserCreationForm):
 class ApplyForm(ModelForm):
     class Meta:
         model=Candidates
-        fields="__all__"
+        fields=("name", "email", "dob")

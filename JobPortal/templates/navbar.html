@@ -6,7 +6,7 @@
     <span class="user">Hello, {{request.user}} &nbsp;</span>
     <span><a class="user" href="{% url 'logout' %}"> Logout</a></span>
     {% else %}
-    <span><a class="user" href="{% url 'login' %}">Company Login</a></span>
+    <span><a class="user" href="{% url 'login' %}">Login</a></span>
     <p>&nbsp;&nbsp;</p>
     <span><a class="user" href="{% url 'register' %}">Company Register</a></span>
     <p>&nbsp;&nbsp;</p>

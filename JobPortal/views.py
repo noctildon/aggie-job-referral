@@ -7,7 +7,14 @@ from .forms import *
 
 def home(request):
     if request.user.is_authenticated:
-        candidates = Candidates.objects.filter(company__name=request.user.username)
+        # candidates = Candidates.objects.filter(company__name=request.user.username)
+        print(dir(request.user))
+        # print(request.user.name)
+        # print(request.user.dob)
+        # print(request.user.is_company)
+
+        # print(Candidates.objects.filter(is_company=False))
+        candidates = Candidates.objects.all()
         context = {
             'candidates':candidates,
         }
@@ -39,7 +46,6 @@ def loginUser(request):
        return render(request,'login.html')
 
 
-
 def registerCandidate(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -48,8 +54,7 @@ def registerCandidate(request):
         if request.method == 'POST':
             Form = CandidateCreationForm(request.POST)
             if Form.is_valid():
-                currUser=Form.save()
-                Candidates.objects.create(name=currUser.username,email=currUser.email)
+                Form.save()
                 return redirect('login')
         context = {'form': Form}
         return render(request,'register.html',context)
