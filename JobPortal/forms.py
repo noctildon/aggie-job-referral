@@ -11,14 +11,16 @@ class CandidateCreationForm(UserCreationForm):
     email = forms.EmailField(label='email')
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
-    dob = forms.DateField(label='dob')
+
+    # custom fields
     is_company = forms.BooleanField(label='Are you a company? check if yes',required=False)
+    name = forms.CharField(label='Your real name', min_length=2, max_length=150)
 
     class Meta:
     # class Meta(UserCreationForm.Meta):
-        # model = Candidates
-        model = User
-        fields = ('username', 'email', 'password1', 'dob', 'is_company')
+        model = Candidates
+        # model = User
+        fields = ('username', 'name', 'email', 'password1', 'is_company')
         # fields = UserCreationForm.Meta.fields + fields
 
     def username_clean(self):
@@ -43,20 +45,16 @@ class CandidateCreationForm(UserCreationForm):
             raise ValidationError("Password don't match")
         return password2
 
-    def save(self, *args, **kwargs):
+    def save(self):
         user = User.objects.create_user(
             self.cleaned_data['username'],
             email=self.cleaned_data['email'],
             password=self.cleaned_data['password1'],
-
-            # BUG: TypeError: User() got an unexpected keyword argument 'dob'
-            # dob=self.cleaned_data['dob'],
-            # is_company=self.cleaned_data['is_company']
         )
-        return user
+        return user, self.cleaned_data['is_company'], self.cleaned_data['name']
 
 
 class ApplyForm(ModelForm):
     class Meta:
         model=Candidates
-        fields=("name", "email", "dob")
+        fields=("name", "email")

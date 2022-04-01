@@ -1,5 +1,5 @@
 from django.db import models
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User
 
 
 class Company(models.Model):
@@ -13,13 +13,11 @@ class Company(models.Model):
 
 
 class Candidates(models.Model):
-    # user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)
-    dob=models.DateField(null=True)
     is_company=models.BooleanField(default=False)
 
-    # username=models.OneToOneField(User,null=True,on_delete=models.CASCADE)
-    USERNAME_FIELD = "username"
+    USERNAME_FIELD = "username" # this line is necessary
     def __str__(self):
         return self.name

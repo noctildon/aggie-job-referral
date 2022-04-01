@@ -10,7 +10,6 @@ def home(request):
         # candidates = Candidates.objects.filter(company__name=request.user.username)
         print(dir(request.user))
         # print(request.user.name)
-        # print(request.user.dob)
         # print(request.user.is_company)
 
         # print(Candidates.objects.filter(is_company=False))
@@ -46,6 +45,7 @@ def loginUser(request):
        return render(request,'login.html')
 
 
+# Candidate registration
 def registerCandidate(request):
     if request.user.is_authenticated:
         return redirect('home')
@@ -54,13 +54,14 @@ def registerCandidate(request):
         if request.method == 'POST':
             Form = CandidateCreationForm(request.POST)
             if Form.is_valid():
-                Form.save()
+                currUser, is_company, name = Form.save()
+                Candidates.objects.create(user=currUser,name=name,email=currUser.email)
                 return redirect('login')
         context = {'form': Form}
         return render(request,'register.html',context)
 
 
-# company registration
+# Company registration
 def registerUser(request):
     if request.user.is_authenticated:
         return redirect('home')
