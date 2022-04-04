@@ -7,17 +7,21 @@ from .forms import *
 
 def home(request):
     if request.user.is_authenticated:
-        # candidates = Candidates.objects.filter(company__name=request.user.username)
-        print(dir(request.user))
-        # print(request.user.name)
-        # print(request.user.is_company)
 
-        # print(Candidates.objects.filter(is_company=False))
+        candidate_login = Candidates.objects.filter(user=request.user)
+        if candidate_login:
+            candidate = candidate_login[0]
+            companies = Company.objects.all()
+            context = {'candidate': candidate, 'companies':companies}
+            return render(request,'candidate_home.html',context)
+
         candidates = Candidates.objects.all()
         context = {
             'candidates':candidates,
         }
+
         return render(request,'hr.html',context)
+
     else:
         companies = Company.objects.all()
         context = {

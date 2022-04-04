@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static%}
+
+{% block content %}
+<div class="container card">
+    <h1>Hello {{candidate.name}}</h1>
+    <br>
+    <h5>Here is the list of jobs you applied</h5>
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>Company Name</th>
+            </tr>
+            {% for c in companies %}
+            <tr>
+                <td>{{c.name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+{% endblock %}
