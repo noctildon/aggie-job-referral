@@ -66,16 +66,17 @@ def registerCandidate(request):
 
 
 # Company registration
-def registerUser(request):
+def registerCompany(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
-        Form = UserCreationForm()
+        # Form = UserCreationForm()
+        Form = CompanyCreationForm()
         if request.method == 'POST':
-            Form = UserCreationForm(request.POST)
+            Form = CompanyCreationForm(request.POST)
             if Form.is_valid():
-                currUser=Form.save()
-                Company.objects.create(user=currUser,name=currUser.username)
+                currUser, name = Form.save()
+                Company.objects.create(user=currUser,name=name, email=currUser.email)
                 return redirect('login')
         context = {'form': Form}
         return render(request,'register.html',context)
