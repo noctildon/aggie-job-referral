@@ -3,8 +3,8 @@ from django.contrib.auth.models import User
 
 
 class Company(models.Model):
-    user=models.OneToOneField(User,on_delete=models.CASCADE)
-    name=models.CharField(max_length=200,null=True) # company name
+    user = models.OneToOneField(User,on_delete=models.CASCADE)
+    name = models.CharField(max_length=200,null=True) # recruiter name
     email = models.CharField(max_length=200,null=True)
 
     position=models.CharField(max_length=200,null=True)
@@ -15,11 +15,22 @@ class Company(models.Model):
         return self.name
 
 
+# TODO: add applicants field
+class Jobs(models.Model):
+    recruiter = models.ForeignKey(User, on_delete=models.CASCADE)
+    job_title = models.CharField(max_length=200,null=True)
+    company = models.CharField(max_length=200,null=True)
+    location = models.CharField(max_length=200,null=True)
+
+    def __str__(self):
+        return self.job_title
+
+
 class Candidates(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)
-    is_company=models.BooleanField(default=False)
+    is_company = models.BooleanField(default=False)
 
     USERNAME_FIELD = "username" # this line is necessary
     def __str__(self):

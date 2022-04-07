@@ -100,6 +100,14 @@ class CompanyCreationForm(UserCreationForm):
 
 
 
+class PostForm(ModelForm):
+    class Meta:
+        model = Jobs
+        fields = ("job_title", "company", "location")
+
+    def save(self):
+        return self.cleaned_data['job_title'], self.cleaned_data['company'], self.cleaned_data['location']
+
 class ApplyForm(ModelForm):
     class Meta:
         model=Candidates

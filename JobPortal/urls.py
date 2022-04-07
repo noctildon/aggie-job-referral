@@ -8,4 +8,5 @@ urlpatterns = [
     path('register/',registerCompany,name='register'),
     path('registercandidate/',registerCandidate,name='registercandidate'),
     path('apply/',applyPage,name='apply'),
+    path('post/',PostPage,name='post'),
 ]
