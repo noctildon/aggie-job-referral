@@ -8,20 +8,16 @@ from django.core.exceptions import ValidationError
 
 class CandidateCreationForm(UserCreationForm):
     username = forms.CharField(label='username', min_length=5, max_length=150)
+    name = forms.CharField(label='Your real name', min_length=2, max_length=150)
     email = forms.EmailField(label='email')
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
-
-    # custom fields
-    # TODO: remove is_company
-    is_company = forms.BooleanField(label='Are you a company? check if yes',required=False)
-    name = forms.CharField(label='Your real name', min_length=2, max_length=150)
 
     class Meta:
     # class Meta(UserCreationForm.Meta):
         model = Candidates
         # model = User
-        fields = ('username', 'name', 'email', 'password1', 'is_company')
+        fields = ('username', 'name', 'email', 'password1')
         # fields = UserCreationForm.Meta.fields + fields
 
     def username_clean(self):
@@ -52,7 +48,7 @@ class CandidateCreationForm(UserCreationForm):
             email=self.cleaned_data['email'],
             password=self.cleaned_data['password1'],
         )
-        return user, self.cleaned_data['is_company'], self.cleaned_data['name']
+        return user, self.cleaned_data['name']
 
 
 

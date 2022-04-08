@@ -8,16 +8,14 @@
             <tr>
                 <th>Company Name</th>
                 <th>Position</th>
-                <th>Description</th>
                 <th>Location</th>
                 <th></th>
             </tr>
-            {% for c in companies %}
+            {% for j in jobs %}
             <tr>
-                <td>{{c.name}}</td>
-                <td>{{c.position}}</td>
-                <td>{{c.description}}</td>
-                <td>{{c.Location}}</td>
+                <td>{{j.company}}</td>
+                <td>{{j.job_title}}</td>
+                <td>{{j.location}}</td>
                 <td><a href="{% url 'apply' %}" class="btn btn-primary" type="submit">Apply</a></td>
             </tr>
             {% endfor %}

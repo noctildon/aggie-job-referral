@@ -28,9 +28,9 @@ def home(request):
             return render(request,'hr.html',context)
 
     else:
-        companies = Company.objects.all()
+        jobs = Jobs.objects.all()
         context = {
-            'companies':companies,
+            'jobs': jobs,
         }
         return render(request,'Jobseeker.html',context)
 
@@ -63,7 +63,7 @@ def registerCandidate(request):
         if request.method == 'POST':
             Form = CandidateCreationForm(request.POST)
             if Form.is_valid():
-                currUser, is_company, name = Form.save()
+                currUser, name = Form.save()
                 Candidates.objects.create(user=currUser,name=name,email=currUser.email)
                 return redirect('login')
         context = {'form': Form}
