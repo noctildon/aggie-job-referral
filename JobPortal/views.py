@@ -8,12 +8,12 @@ def home(request):
     if request.user.is_authenticated:
 
         candidate_login = Candidates.objects.filter(user=request.user)
-        recruiter_login = Company.objects.filter(user=request.user)
+        recruiter_login = Recruiter.objects.filter(user=request.user)
 
         if candidate_login:
             candidate = candidate_login[0]
-            companies = Company.objects.all()
-            context = {'candidate': candidate, 'companies':companies}
+            recruiters = Recruiter.objects.all()
+            context = {'candidate': candidate, 'recruiters':recruiters}
             return render(request,'candidate_home.html',context)
 
         if recruiter_login:
@@ -70,17 +70,17 @@ def registerCandidate(request):
         return render(request,'register.html',context)
 
 
-# Company registration
-def registerCompany(request):
+# Recruiter registration
+def registerRecruiter(request):
     if request.user.is_authenticated:
         return redirect('home')
     else:
-        Form = CompanyCreationForm()
+        Form = RecruiterCreationForm()
         if request.method == 'POST':
-            Form = CompanyCreationForm(request.POST)
+            Form = RecruiterCreationForm(request.POST)
             if Form.is_valid():
                 currUser, name = Form.save()
-                Company.objects.create(user=currUser,name=name, email=currUser.email)
+                Recruiter.objects.create(user=currUser,name=name, email=currUser.email)
                 return redirect('login')
         context = {'form': Form}
         return render(request,'register.html',context)

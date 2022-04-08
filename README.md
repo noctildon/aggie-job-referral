@@ -33,7 +33,6 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
-- [ ] Rename company to recruiter
 - [ ] Remove the unused urls and functions
 - [ ] Build dashboard for company and candidate
 - [ ] Email notification

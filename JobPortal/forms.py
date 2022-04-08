@@ -1,7 +1,7 @@
 from django.forms import ModelForm
 from .models import *
 from django import forms
-from django.contrib.auth.models import User, AbstractUser
+from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.core.exceptions import ValidationError
 
@@ -51,8 +51,7 @@ class CandidateCreationForm(UserCreationForm):
         return user, self.cleaned_data['name']
 
 
-
-class CompanyCreationForm(UserCreationForm):
+class RecruiterCreationForm(UserCreationForm):
     username = forms.CharField(label='username', min_length=5, max_length=150)
     name = forms.CharField(label='Your real name', min_length=2, max_length=150)
     email = forms.EmailField(label='email')
@@ -61,7 +60,7 @@ class CompanyCreationForm(UserCreationForm):
 
 
     class Meta:
-        model = Candidates
+        model = Recruiter
         fields = ('username', 'name', 'email', 'password1')
 
     def username_clean(self):
@@ -93,7 +92,6 @@ class CompanyCreationForm(UserCreationForm):
             password=self.cleaned_data['password1'],
         )
         return user, self.cleaned_data['name']
-
 
 
 class PostForm(ModelForm):
