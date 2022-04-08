@@ -102,7 +102,8 @@ class PostForm(ModelForm):
     def save(self):
         return self.cleaned_data['job_title'], self.cleaned_data['company'], self.cleaned_data['location']
 
+
 class ApplyForm(ModelForm):
     class Meta:
-        model=Candidates
-        fields=("name", "email")
+        model = Candidates
+        fields = ()

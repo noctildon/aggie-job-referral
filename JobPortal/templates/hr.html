@@ -8,13 +8,21 @@
     <div class="card-body">
         <table class="table table-hover">
             <tr>
-                <th>Name</th>
-                <th>Email</th>
+                <th>Job title</th>
+                <th>Company</th>
+                <th>Location</th>
+                <th>Applicants</th>
             </tr>
-            {% for c in candidates %}
+            {% for job in jobs %}
             <tr>
-                <td>{{c.name}}</td>
-                <td>{{c.email}}</td>
+                <td>{{job.job_title}}</td>
+                <td>{{job.company}}</td>
+                <td>{{job.location}}</td>
+                <td>
+                    {% for app in job.apps %}
+                    {{app.name}}
+                    {% endfor %}
+                </td>
             </tr>
             {% endfor %}
         </table>

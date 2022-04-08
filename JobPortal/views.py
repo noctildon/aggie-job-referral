@@ -13,17 +13,26 @@ def home(request):
         if candidate_login:
             candidate = candidate_login[0]
             recruiters = Recruiter.objects.all()
-            context = {'candidate': candidate, 'recruiters':recruiters}
+            jobs = Jobs.objects.all()
+
+            form = ApplyForm()
+            if request.method == 'POST':
+                form = ApplyForm()
+                job = jobs[0]
+                job.applicants.add(candidate)
+
+            context = {'candidate': candidate, 'recruiters':recruiters, 'jobs': jobs, 'form':form}
+
             return render(request,'candidate_home.html',context)
+
 
         if recruiter_login:
             recruiter = recruiter_login[0]
+            jobs = Jobs.objects.filter(recruiter=request.user)
+            for job in jobs:
+                job.apps = job.applicants.all()
 
-            candidates = Candidates.objects.all()
-            context = {
-                'candidates':candidates,
-                'recruiter': recruiter,
-            }
+            context = {'recruiter': recruiter, 'jobs': jobs }
 
             return render(request,'hr.html',context)
 

@@ -2,18 +2,49 @@
 {% load static%}
 
 {% block content %}
+<h1>Hello {{candidate.name}}</h1>
 <div class="container card">
-    <h1>Hello {{candidate.name}}</h1>
     <br>
     <h5>Here is the list of jobs you applied</h5>
     <div class="card-body">
         <table class="table table-hover">
             <tr>
-                <th>Company Name</th>
+                <th>Recruiter</th>
             </tr>
-            {% for c in recruiters %}
+            {% for rec in recruiters %}
             <tr>
-                <td>{{c.name}}</td>
+                <td>{{rec.name}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+
+<br>
+<br>
+<div class="container card">
+    <br>
+    <h5>Open Jobs</h5>
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>Company</th>
+                <th>Job title</th>
+                <th>Location</th>
+                <th></th>
+            </tr>
+            {% for job in jobs %}
+            <tr>
+                <td>{{job.company}}</td>
+                <td>{{job.job_title}}</td>
+                <td>{{job.location}}</td>
+                <td>
+                    <form action="" method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{form.as_p}}
+                        <input type="submit" class="btn btn-primary" value="Apply">
+                    </form>
+                </td>
             </tr>
             {% endfor %}
         </table>
