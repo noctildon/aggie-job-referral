@@ -103,7 +103,8 @@ class PostForm(ModelForm):
         return self.cleaned_data['job_title'], self.cleaned_data['company'], self.cleaned_data['location']
 
 
-class ApplyForm(ModelForm):
-    class Meta:
-        model = Candidates
-        fields = ()
+class ApplyForm(forms.Form):
+    pk = forms.IntegerField(label='Job Id to apply')
+
+    def save(self):
+        return self.cleaned_data['pk']

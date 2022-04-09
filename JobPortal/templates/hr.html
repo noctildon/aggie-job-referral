@@ -4,7 +4,7 @@
 {% block content %}
 <h1>Hello {{recruiter.name}}</h1>
 <div class="container card">
-    <h2>Candidates applied</h2>
+    <h2>Jobs posted</h2>
     <div class="card-body">
         <table class="table table-hover">
             <tr>
@@ -12,6 +12,7 @@
                 <th>Company</th>
                 <th>Location</th>
                 <th>Applicants</th>
+                <th>Total applicants</th>
             </tr>
             {% for job in jobs %}
             <tr>
@@ -19,9 +20,16 @@
                 <td>{{job.company}}</td>
                 <td>{{job.location}}</td>
                 <td>
-                    {% for app in job.apps %}
-                    {{app.name}}
-                    {% endfor %}
+                    {% if job.apps %}
+                        {% for app in job.apps %}
+                        {{app.name}}
+                        {% endfor %}
+                    {% else %}
+                        No applicants.
+                    {% endif %}
+                </td>
+                <td>
+                    {{ job.apps | length}}
                 </td>
             </tr>
             {% endfor %}

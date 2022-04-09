@@ -5,15 +5,24 @@
 <h1>Hello {{candidate.name}}</h1>
 <div class="container card">
     <br>
-    <h5>Here is the list of jobs you applied</h5>
+    <h5>Jobs list</h5>
     <div class="card-body">
         <table class="table table-hover">
             <tr>
-                <th>Recruiter</th>
+                <th>Company</th>
+                <th>Job title</th>
+                <th>Location</th>
+                <th>Job id</th>
+                <th></th>
+                <th></th>
             </tr>
-            {% for rec in recruiters %}
+            {% for job in jobs %}
             <tr>
-                <td>{{rec.name}}</td>
+                <td>{{job.company}}</td>
+                <td>{{job.job_title}}</td>
+                <td>{{job.location}}</td>
+                <td>{{job.job_id}}</td>
+                <td>{{job.status}}</td>
             </tr>
             {% endfor %}
         </table>
@@ -22,33 +31,12 @@
 
 <br>
 <br>
-<div class="container card">
-    <br>
-    <h5>Open Jobs</h5>
-    <div class="card-body">
-        <table class="table table-hover">
-            <tr>
-                <th>Company</th>
-                <th>Job title</th>
-                <th>Location</th>
-                <th></th>
-            </tr>
-            {% for job in jobs %}
-            <tr>
-                <td>{{job.company}}</td>
-                <td>{{job.job_title}}</td>
-                <td>{{job.location}}</td>
-                <td>
-                    <form action="" method="POST" enctype="multipart/form-data">
-                        {% csrf_token %}
-                        {{form.as_p}}
-                        <input type="submit" class="btn btn-primary" value="Apply">
-                    </form>
-                </td>
-            </tr>
-            {% endfor %}
-        </table>
-    </div>
+<div class="container">
+    <form action="" method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{form.as_p}}
+        <input type="submit" class="btn btn-primary" value="Apply">
+    </form>
 </div>
 
 {% endblock %}

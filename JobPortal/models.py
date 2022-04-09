@@ -15,6 +15,7 @@ class Recruiter(models.Model):
 class Jobs(models.Model):
     recruiter = models.ForeignKey(User, on_delete=models.CASCADE)
     job_title = models.CharField(max_length=200,null=True)
+    job_id = models.BigAutoField(primary_key=True)
     company = models.CharField(max_length=200,null=True)
     location = models.CharField(max_length=200,null=True)
     applicants = models.ManyToManyField('Candidates', blank=True)

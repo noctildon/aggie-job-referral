@@ -1,6 +1,7 @@
 from django.shortcuts import render,redirect
-from .models import *
 from django.contrib.auth import login,logout,authenticate
+from django.forms.models import model_to_dict
+from .models import *
 from .forms import *
 
 
@@ -12,17 +13,35 @@ def home(request):
 
         if candidate_login:
             candidate = candidate_login[0]
-            recruiters = Recruiter.objects.all()
             jobs = Jobs.objects.all()
 
+            # Apply the job
             form = ApplyForm()
             if request.method == 'POST':
-                form = ApplyForm()
-                job = jobs[0]
-                job.applicants.add(candidate)
+                form = ApplyForm(request.POST)
+                if form.is_valid():
+                    job_id = form.save()
+                    jobs_applying = list(filter(lambda j: (j.pk == job_id), jobs)) # or j.job_id
 
-            context = {'candidate': candidate, 'recruiters':recruiters, 'jobs': jobs, 'form':form}
+                    if jobs_applying:
+                        job = jobs_applying[0]
+                        job.applicants.add(candidate)
+                        candidate.applied_jobs.add(job)
+                    else:
+                        # TODO: handle the not found ID
+                        print('job ID not found')
 
+
+            # filter the jobs that the candidate has applied
+            applied_jobs_id = [j.pk for j in candidate.applied_jobs.all()]
+            jobs = [model_to_dict(job) for job in jobs]
+            for job in jobs:
+                if job['job_id'] in applied_jobs_id:
+                    job['status'] = 'applied'
+                else:
+                    job['status'] = 'new'
+
+            context = {'candidate': candidate, 'jobs': jobs, 'form':form}
             return render(request,'candidate_home.html',context)
 
 
@@ -75,7 +94,7 @@ def registerCandidate(request):
                 currUser, name = Form.save()
                 Candidates.objects.create(user=currUser,name=name,email=currUser.email)
                 return redirect('login')
-        context = {'form': Form}
+        context = {'form': Form, 'role': 'Candidate'}
         return render(request,'register.html',context)
 
 
@@ -91,7 +110,7 @@ def registerRecruiter(request):
                 currUser, name = Form.save()
                 Recruiter.objects.create(user=currUser,name=name, email=currUser.email)
                 return redirect('login')
-        context = {'form': Form}
+        context = {'form': Form, 'role': 'Recruiter'}
         return render(request,'register.html',context)
 
 
