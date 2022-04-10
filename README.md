@@ -33,14 +33,11 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
-- [ ] recruiter can see the applied candidate info
-- [ ] candidate can apply the job by clicking the button
-- [ ] Remove the unused urls and functions
-- [ ] Build dashboard for recruiter and candidate
-- [ ] Email notification
+- [ ] private message
+- [ ] email notification when the status changed
 - [ ] Test deploy on heroku
 
 
 ## **Before Deploy on heroku**
-- [ ] Security check
+- [ ] Django security check
 - [ ] change LOCAL_RUNNING in AggieJobReferral/settings.py to False

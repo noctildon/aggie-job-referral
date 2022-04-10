@@ -15,22 +15,13 @@ def home(request):
             candidate = candidate_login[0]
             jobs = Jobs.objects.all()
 
-            # Apply the job
-            form = ApplyForm()
-            if request.method == 'POST':
-                form = ApplyForm(request.POST)
-                if form.is_valid():
-                    job_id = form.save()
-                    jobs_applying = list(filter(lambda j: (j.pk == job_id), jobs)) # or j.job_id
-
-                    if jobs_applying:
-                        job = jobs_applying[0]
-                        job.applicants.add(candidate)
-                        candidate.applied_jobs.add(job)
-                    else:
-                        # TODO: handle the not found ID
-                        print('job ID not found')
-
+            # apply the job
+            jobid = request.GET.get('jobid')
+            job_applying = jobs.filter(pk=jobid)
+            if job_applying:
+                job_applying = job_applying[0]
+                job_applying.applicants.add(candidate)
+                candidate.applied_jobs.add(job_applying)
 
             # filter the jobs that the candidate has applied
             applied_jobs_id = [j.pk for j in candidate.applied_jobs.all()]
@@ -41,7 +32,7 @@ def home(request):
                 else:
                     job['status'] = 'new'
 
-            context = {'candidate': candidate, 'jobs': jobs, 'form':form}
+            context = {'candidate': candidate, 'jobs': jobs}
             return render(request,'candidate_home.html',context)
 
 
@@ -61,6 +52,22 @@ def home(request):
             'jobs': jobs,
         }
         return render(request,'Jobseeker.html',context)
+
+
+def hrApplicants(request):
+    if request.user.is_authenticated:
+        recruiter_login = Recruiter.objects.filter(user=request.user)
+        if recruiter_login:
+            recruiter = recruiter_login[0]
+            jobid = request.GET.get('jobid')
+
+            job = Jobs.objects.filter(recruiter=request.user).filter(pk=jobid)[0]
+            applicants = job.applicants.all()
+            context = {'recruiter': recruiter, 'applicants': applicants}
+
+            return render(request,'hr_applicants.html', context)
+
+    return redirect('home')
 
 
 def logoutUser(request):
@@ -115,26 +122,17 @@ def registerRecruiter(request):
 
 
 def PostPage(request):
-    if not request.user.is_authenticated:
-        return redirect('home')
+    if request.user.is_authenticated:
+        recruiter_login = Recruiter.objects.filter(user=request.user)
+        if recruiter_login:
+            form = PostForm()
+            if request.method == 'POST':
+                form = PostForm(request.POST,request.FILES)
+                if form.is_valid():
+                    job_title, company, location = form.save()
+                    Jobs.objects.create(recruiter=request.user, job_title=job_title, company=company, location=location)
+                    return redirect('home')
+            context = {'form': form}
+            return render(request,'post.html',context)
 
-    form = PostForm()
-    if request.method == 'POST':
-        form = PostForm(request.POST,request.FILES)
-        if form.is_valid():
-            job_title, company, location = form.save()
-            Jobs.objects.create(recruiter=request.user, job_title=job_title, company=company, location=location)
-            return redirect('home')
-    context = {'form': form}
-    return render(request,'post.html',context)
-
-
-def applyPage(request):
-    form = ApplyForm()
-    if request.method == 'POST':
-        form = ApplyForm(request.POST,request.FILES)
-        if form.is_valid():
-            form.save()
-            return redirect('home')
-    context = {'form':form}
-    return render(request,'apply.html',context)
+    return redirect('home')

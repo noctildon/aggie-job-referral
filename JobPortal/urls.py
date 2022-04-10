@@ -7,6 +7,6 @@ urlpatterns = [
     path('logout/',logoutUser,name='logout'),
     path('registerrecruiter/',registerRecruiter,name='registerrecruiter'),
     path('registercandidate/',registerCandidate,name='registercandidate'),
-    path('apply/',applyPage,name='apply'),
     path('post/',PostPage,name='post'),
+    path('hrapplicants/', hrApplicants, name='hrapplicants')
 ]

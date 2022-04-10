@@ -1,0 +1,23 @@
+{% extends 'main.html' %}
+{% load static%}
+
+{% block content %}
+<h1>Hello {{recruiter.name}}</h1>
+<div class="container card">
+    <h2>Applicants info</h2>
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>Applicant Name</th>
+                <th>email</th>
+            </tr>
+            {% for app in applicants %}
+            <tr>
+                <td>{{app.name}}</td>
+                <td>{{app.email}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</div>
+{% endblock %}
