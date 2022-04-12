@@ -9,6 +9,7 @@ class Recruiter(models.Model):
     user = models.OneToOneField(User,on_delete=models.CASCADE)
     name = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)
+    email_notification = models.BooleanField(default=False)
 
     USERNAME_FIELD = "username" # this line is necessary
     def __str__(self):
@@ -18,8 +19,10 @@ class Candidate(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, null=True)
     name = models.CharField(max_length=200,null=True)
     email = models.CharField(max_length=200,null=True)
-    # applied_jobs = models.ManyToManyField('Jobs', through=Jobs.applicants.through, blank=True)
+    # applied_jobs = models.ManyToManyField('Job', through=Jobs.applicants.through, blank=True)
     resume = models.FileField(null=True) # PDF
+    email_notification = models.BooleanField(default=False)
+
 
     USERNAME_FIELD = "username" # this line is necessary
     def __str__(self):
@@ -50,7 +53,7 @@ class Referral(models.Model):
         return self.applicant
 
 
-# class Jobs(models.Model):
+# class Job(models.Model):
 #     recruiter = models.ForeignKey(User, on_delete=models.CASCADE)
 #     job_title = models.CharField(max_length=200,null=True)
 #     job_id = models.BigAutoField(primary_key=True)

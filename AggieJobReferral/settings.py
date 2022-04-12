@@ -82,6 +82,19 @@ TEMPLATES = [
     },
 ]
 
+
+# EMAIL SETTINGS
+EMAIL_BACKEND = os.getenv('EMAIL_BACKEND')
+EMAIL_HOST = os.getenv('EMAIL_HOST')
+EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
+EMAIL_USE_TLS = eval(os.getenv('EMAIL_USE_TLS'))
+EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+
+# ADMIN EMAIL
+ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+
+
 WSGI_APPLICATION = 'AggieJobReferral.wsgi.application'
 
 

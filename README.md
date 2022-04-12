@@ -33,8 +33,9 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
+- [ ] fix the default resume when requesting a referral
 - [ ] private message
-- [ ] email notification when the status changed
+- [x] email notification when the status changed
 - [ ] pressure test
 - [ ] Test deploy on heroku
 

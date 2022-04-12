@@ -12,4 +12,5 @@ urlpatterns = [
     path('hrapplicants/resumes', pdf_view, name='pdfview'),
     path('hrapplicants/edit', Edit, name='edit'),
     path('requestref/', RequestPage, name='requestref'),
+    path('dashboard/', Dashboard, name='dashboard'),
 ]

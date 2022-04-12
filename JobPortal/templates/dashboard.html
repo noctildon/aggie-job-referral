@@ -1,0 +1,16 @@
+{% extends 'main.html' %}
+{% load static%}
+
+{% block content %}
+<h1>Hello {{user.name}}</h1>
+<div class="container card">
+    <br>
+    <div class="card-body">
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {{form.as_p}}
+            <input type="submit" class="btn btn-success" value="Update">
+        </form>
+    </div>
+</div>
+{% endblock %}

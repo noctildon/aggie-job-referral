@@ -124,3 +124,23 @@ class RequestForm(ModelForm):
 
     def save(self):
         return self.cleaned_data['app_info'], self.cleaned_data['resume']
+
+
+# For candidate
+class DashboardFormCandidate(ModelForm):
+    class Meta:
+        model = Candidate
+        fields = ("resume", "email_notification")
+
+    def save(self):
+        return self.cleaned_data['resume'], self.cleaned_data['email_notification']
+
+
+# For recruiter
+class DashboardFormRecruiter(ModelForm):
+    class Meta:
+        model = Recruiter
+        fields = ("email_notification",)
+
+    def save(self):
+        return self.cleaned_data['email_notification']

@@ -2,6 +2,8 @@ from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
 from django.forms.models import model_to_dict
 from django.http import FileResponse, Http404
+from django.core.mail import send_mail
+from django.conf import settings
 from .models import *
 from .forms import *
 
@@ -12,44 +14,42 @@ def home(request):
         recruiter_login = Recruiter.objects.filter(user=request.user)
 
 
-        ###################### Candidate session
+        ###################### Candidate session ######################
         if candidate_login:
             candidate = candidate_login[0]
             openings = Opening.objects.all()
 
-
-            # TODO: refactor this code
-            # filter the openings that the candidate has applied
-            ref_openings = []
+            # Filter the openings that the candidate has applied
+            openings_ = []
             for opening in openings:
                 requested_refs_for_opening = Referral.objects.filter(applicant=request.user).filter(opening=opening)
                 pk = opening.pk
 
-                # convert to dict
+                # Convert to dict
                 ref_opening = model_to_dict(opening)
                 ref_opening['pk'] = pk
                 if requested_refs_for_opening:
                     ref_opening['ref_status'] = requested_refs_for_opening[0].status
                 else:
                     ref_opening['ref_status'] = 'new'
-                ref_openings.append(ref_opening)
+                openings_.append(ref_opening)
 
-
-            context = {'candidate': candidate, 'openings': ref_openings}
+            context = {'candidate': candidate, 'openings': openings_}
             return render(request,'candidate_home.html',context)
-        ######################
+        ###############################################################
 
-        ###################### Recruiter session
+
+        ###################### Recruiter session ######################
         if recruiter_login:
             recruiter = recruiter_login[0]
             openings = Opening.objects.filter(recruiter=request.user)
-            openings_ = []
 
+            openings_ = []
             for opening in openings:
                 refs = Referral.objects.filter(opening=opening)
                 pk = opening.pk
 
-                # convert to dict
+                # Convert to dict
                 opening = model_to_dict(opening)
                 opening['refs'] = refs
                 opening['pk'] = pk
@@ -57,12 +57,57 @@ def home(request):
 
             context = {'recruiter': recruiter, 'openings': openings_ }
             return render(request,'hr.html',context)
-        ######################
+        ###############################################################
 
     else:
         openings = Opening.objects.all()
         context = {'openings': openings }
         return render(request,'Jobseeker.html',context)
+
+
+# Dashboard
+def Dashboard(request):
+    if request.user.is_authenticated:
+        candidate_login = Candidate.objects.filter(user=request.user)
+        recruiter_login = Recruiter.objects.filter(user=request.user)
+
+        ###################### Candidate session ######################
+        if candidate_login:
+            candidate = candidate_login[0]
+
+            initial = {'resume': candidate.resume, 'email_notification': candidate.email_notification}
+            form = DashboardFormCandidate(initial=initial)
+            if request.method == 'POST':
+                form = DashboardFormCandidate(request.POST,request.FILES)
+                if form.is_valid():
+                    candidate.resume, candidate.email_notification = form.save()
+                    candidate.save()
+
+                    return redirect('home')
+
+            context = {'user': candidate, 'form': form}
+            return render(request,'dashboard.html', context)
+        ###############################################################
+
+        ###################### Recruiter session ######################
+        if recruiter_login:
+            recruiter = recruiter_login[0]
+
+            initial = {'email_notification': recruiter.email_notification}
+            form = DashboardFormRecruiter(initial=initial)
+
+            if request.method == 'POST':
+                form = DashboardFormRecruiter(request.POST,request.FILES)
+                if form.is_valid():
+                    recruiter.email_notification = form.save()
+                    recruiter.save()
+                    return redirect('home')
+
+            context = {'user': recruiter, 'form': form}
+            return render(request,'dashboard.html', context)
+        ###############################################################
+
+    return redirect('home')
 
 
 # View the applicants' requests
@@ -74,21 +119,25 @@ def hrApplicants(request):
             opening_id = request.GET['openingid']
 
 
-            # marking processed
+            # Marking the referral 'processed'
             try:
                 ref_id = request.GET['refid']
                 ref = Referral.objects.get(pk=ref_id)
                 ref.status = 'processed'
                 ref.save()
+
+                # sending email notification
+                candidate_user = ref.applicant
+                candidate = Candidate.objects.get(user=candidate_user)
+                send_email2candidate(candidate)
             except:
                 pass
 
-
             # Collect the referrals
-            refs_ = []
             opening = Opening.objects.get(pk=opening_id)
             refs = Referral.objects.filter(opening=opening)
 
+            refs_ = []
             for ref in refs:
                 applicant = ref.applicant
                 candidate = Candidate.objects.get(user=applicant)
@@ -101,11 +150,8 @@ def hrApplicants(request):
                 ref_['pk'] = ref.pk
                 refs_.append(ref_)
 
-
             context = {'recruiter': recruiter, 'refs': refs_, 'opening': opening}
-
             return render(request,'hr_applicants.html', context)
-
     return redirect('home')
 
 
@@ -216,7 +262,11 @@ def RequestPage(request):
     if request.user.is_authenticated:
         candidate_login = Candidate.objects.filter(user=request.user)
         if candidate_login:
-            form = RequestForm()
+            candidate = candidate_login[0]
+
+            initial = {'resume': candidate.resume}
+            form = RequestForm(initial=initial)
+
             opening_id = request.GET.get('openingid')
             opening = Opening.objects.get(pk=opening_id)
             if request.method == 'POST':
@@ -224,8 +274,52 @@ def RequestPage(request):
                 if form.is_valid():
                     app_info, resume = form.save()
                     Referral.objects.create(applicant=request.user,opening=opening, app_info=app_info, resume=resume)
+
+                    recruiter_user = opening.recruiter
+                    recruiter = Recruiter.objects.get(user=recruiter_user)
+                    send_email2recruiter(recruiter)
                     return redirect('home')
             context = {'form': form}
             return render(request,'request_ref.html',context)
 
     return redirect('home')
+
+
+
+def send_email2recruiter(recruiter, testing=True):
+    if not recruiter.email_notification:
+        return
+
+    subject = 'A referral request is submitted.'
+    message = f'Dear {recruiter.name},\nThere is recently new referral request. Please check the AJR website.'
+
+    if testing:
+        print('subject', subject)
+        print('message', message)
+        print('email to', recruiter.email)
+        return
+
+    send_mail(subject, message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[recruiter.email],
+        fail_silently=False)
+
+
+
+def send_email2candidate(candidate, testing=True):
+    if not candidate.email_notification:
+        return
+
+    subject = 'Your referral request gets processed!!'
+    message = f'Dear {candidate.name},\nYour referral request gets processed!! Wait for more from the recruiter.'
+
+    if testing:
+        print('subject', subject)
+        print('message', message)
+        print('email to', candidate.email)
+        return
+
+    send_mail(subject, message,
+        from_email=settings.EMAIL_HOST_USER,
+        recipient_list=[candidate.email],
+        fail_silently=False)

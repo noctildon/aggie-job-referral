@@ -4,6 +4,7 @@
 {% block content %}
 <h1>Request a referral</h1>
 <div class="container">
+    <h5>Put the job title, id, link, etc in the "App info" box</h5>
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
