@@ -2,12 +2,12 @@
 {% load static%}
 
 {% block content %}
-<h1>New Opening</h1>
+<h1>Edit the opening</h1>
 <div class="container">
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{form.as_p}}
-        <input type="submit" class="btn btn-success" value="post">
+        <input type="submit" class="btn btn-success" value="submit">
     </form>
 </div>
 {% endblock %}

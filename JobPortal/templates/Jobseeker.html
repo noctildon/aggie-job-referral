@@ -7,15 +7,15 @@
         <table class="table table-hover">
             <tr>
                 <th>Company Name</th>
-                <th>Position</th>
-                <th>Location</th>
+                <th>Job title</th>
+                <th>Job description</th>
                 <th></th>
             </tr>
-            {% for j in jobs %}
+            {% for opening in openings %}
             <tr>
-                <td>{{j.company}}</td>
-                <td>{{j.job_title}}</td>
-                <td>{{j.location}}</td>
+                <td>{{opening.company}}</td>
+                <td>{{opening.job_title}}</td>
+                <td>{{opening.job_description}}</td>
                 <td><a href="{% url 'registercandidate' %}" class="btn btn-primary" type="submit">Apply</a></td>
             </tr>
             {% endfor %}

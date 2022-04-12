@@ -4,17 +4,52 @@
 {% block content %}
 <h1>Hello {{recruiter.name}}</h1>
 <div class="container card">
+    <h2>Opening info</h2>
+    <div class="card-body">
+        <table class="table table-hover">
+            <tr>
+                <th>Company</th>
+                <th>Job title</th>
+                <th>Job description</th>
+                <th>Status</th>
+            </tr>
+            <tr>
+                <td>{{opening.company}}</td>
+                <td>{{opening.job_title}}</td>
+                <td>{{opening.job_description}}</td>
+                <td>{{opening.status}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+<br>
+<br>
+<div class="container card">
     <h2>Applicants info</h2>
     <div class="card-body">
         <table class="table table-hover">
             <tr>
                 <th>Applicant Name</th>
-                <th>email</th>
+                <th>Email</th>
+                <th>Content</th>
+                <th>Resume</th>
+                <th>Click to mark as processed</th>
             </tr>
-            {% for app in applicants %}
+            {% for ref in refs %}
             <tr>
-                <td>{{app.name}}</td>
-                <td>{{app.email}}</td>
+                <td>{{ref.app_name}}</td>
+                <td>{{ref.app_email}}</td>
+                <td>{{ref.app_info}}</td>
+                <td>
+                    <a href="resumes?link={{ref.resume}}">pdf link</a>
+                </td>
+                <td>
+                    {% if ref.status == 'unprocessed' %}
+                        <a href="?openingid={{opening.pk}}&refid={{ref.pk}}">unprocessed</a>
+                    {% else %}
+                        <div>processed</div>
+                    {% endif %}
+                </td>
             </tr>
             {% endfor %}
         </table>

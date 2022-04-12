@@ -1,73 +1,144 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth import login,logout,authenticate
 from django.forms.models import model_to_dict
+from django.http import FileResponse, Http404
 from .models import *
 from .forms import *
 
 
 def home(request):
     if request.user.is_authenticated:
-
-        candidate_login = Candidates.objects.filter(user=request.user)
+        candidate_login = Candidate.objects.filter(user=request.user)
         recruiter_login = Recruiter.objects.filter(user=request.user)
 
+
+        ###################### Candidate session
         if candidate_login:
             candidate = candidate_login[0]
-            jobs = Jobs.objects.all()
+            openings = Opening.objects.all()
 
-            # apply the job
-            jobid = request.GET.get('jobid')
-            job_applying = jobs.filter(pk=jobid)
-            if job_applying:
-                job_applying = job_applying[0]
-                job_applying.applicants.add(candidate)
-                candidate.applied_jobs.add(job_applying)
 
-            # filter the jobs that the candidate has applied
-            applied_jobs_id = [j.pk for j in candidate.applied_jobs.all()]
-            jobs = [model_to_dict(job) for job in jobs]
-            for job in jobs:
-                if job['job_id'] in applied_jobs_id:
-                    job['status'] = 'applied'
+            # TODO: refactor this code
+            # filter the openings that the candidate has applied
+            ref_openings = []
+            for opening in openings:
+                requested_refs_for_opening = Referral.objects.filter(applicant=request.user).filter(opening=opening)
+                pk = opening.pk
+
+                # convert to dict
+                ref_opening = model_to_dict(opening)
+                ref_opening['pk'] = pk
+                if requested_refs_for_opening:
+                    ref_opening['ref_status'] = requested_refs_for_opening[0].status
                 else:
-                    job['status'] = 'new'
+                    ref_opening['ref_status'] = 'new'
+                ref_openings.append(ref_opening)
 
-            context = {'candidate': candidate, 'jobs': jobs}
+
+            context = {'candidate': candidate, 'openings': ref_openings}
             return render(request,'candidate_home.html',context)
+        ######################
 
-
+        ###################### Recruiter session
         if recruiter_login:
             recruiter = recruiter_login[0]
-            jobs = Jobs.objects.filter(recruiter=request.user)
-            for job in jobs:
-                job.apps = job.applicants.all()
+            openings = Opening.objects.filter(recruiter=request.user)
+            openings_ = []
 
-            context = {'recruiter': recruiter, 'jobs': jobs }
+            for opening in openings:
+                refs = Referral.objects.filter(opening=opening)
+                pk = opening.pk
 
+                # convert to dict
+                opening = model_to_dict(opening)
+                opening['refs'] = refs
+                opening['pk'] = pk
+                openings_.append(opening)
+
+            context = {'recruiter': recruiter, 'openings': openings_ }
             return render(request,'hr.html',context)
+        ######################
 
     else:
-        jobs = Jobs.objects.all()
-        context = {
-            'jobs': jobs,
-        }
+        openings = Opening.objects.all()
+        context = {'openings': openings }
         return render(request,'Jobseeker.html',context)
 
 
+# View the applicants' requests
 def hrApplicants(request):
     if request.user.is_authenticated:
         recruiter_login = Recruiter.objects.filter(user=request.user)
         if recruiter_login:
             recruiter = recruiter_login[0]
-            jobid = request.GET.get('jobid')
+            opening_id = request.GET['openingid']
 
-            job = Jobs.objects.filter(recruiter=request.user).filter(pk=jobid)[0]
-            applicants = job.applicants.all()
-            context = {'recruiter': recruiter, 'applicants': applicants}
+
+            # marking processed
+            try:
+                ref_id = request.GET['refid']
+                ref = Referral.objects.get(pk=ref_id)
+                ref.status = 'processed'
+                ref.save()
+            except:
+                pass
+
+
+            # Collect the referrals
+            refs_ = []
+            opening = Opening.objects.get(pk=opening_id)
+            refs = Referral.objects.filter(opening=opening)
+
+            for ref in refs:
+                applicant = ref.applicant
+                candidate = Candidate.objects.get(user=applicant)
+                applicant_name = candidate.name
+                applicant_email = candidate.email
+
+                ref_ = model_to_dict(ref)
+                ref_['app_name'] = applicant_name
+                ref_['app_email'] = applicant_email
+                ref_['pk'] = ref.pk
+                refs_.append(ref_)
+
+
+            context = {'recruiter': recruiter, 'refs': refs_, 'opening': opening}
 
             return render(request,'hr_applicants.html', context)
 
     return redirect('home')
+
+
+# Edit the opening
+def Edit(request):
+    if request.user.is_authenticated:
+        recruiter_login = Recruiter.objects.filter(user=request.user)
+        if recruiter_login:
+            opening_id = request.GET.get('openingid')
+            opening = Opening.objects.get(pk=opening_id)
+
+            initial = {'company': opening.company, 'job_title': opening.job_title, 'job_description': opening.job_description, 'status': opening.status}
+            form = EditForm(initial=initial)
+            if request.method == 'POST':
+                form = EditForm(request.POST,request.FILES)
+                if form.is_valid():
+                    opening.company, opening.job_title, opening.job_description, opening.status = form.save()
+                    opening.save()
+
+                    return redirect('home')
+
+            context = {'form': form}
+            return render(request,'edit.html',context)
+
+    return redirect('home')
+
+
+def pdf_view(request):
+    try:
+        link =  request.GET.get('link')
+        return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+    except FileNotFoundError:
+        raise Http404()
 
 
 def logoutUser(request):
@@ -99,7 +170,7 @@ def registerCandidate(request):
             Form = CandidateCreationForm(request.POST)
             if Form.is_valid():
                 currUser, name = Form.save()
-                Candidates.objects.create(user=currUser,name=name,email=currUser.email)
+                Candidate.objects.create(user=currUser,name=name,email=currUser.email)
                 return redirect('login')
         context = {'form': Form, 'role': 'Candidate'}
         return render(request,'register.html',context)
@@ -117,10 +188,11 @@ def registerRecruiter(request):
                 currUser, name = Form.save()
                 Recruiter.objects.create(user=currUser,name=name, email=currUser.email)
                 return redirect('login')
-        context = {'form': Form, 'role': 'Recruiter'}
+        context = {'form': Form, 'role': 'Recruiter/Empolyee'}
         return render(request,'register.html',context)
 
 
+# Post opening
 def PostPage(request):
     if request.user.is_authenticated:
         recruiter_login = Recruiter.objects.filter(user=request.user)
@@ -129,10 +201,31 @@ def PostPage(request):
             if request.method == 'POST':
                 form = PostForm(request.POST,request.FILES)
                 if form.is_valid():
-                    job_title, company, location = form.save()
-                    Jobs.objects.create(recruiter=request.user, job_title=job_title, company=company, location=location)
+                    company, job_title, job_description = form.save()
+
+                    Opening.objects.create(recruiter=request.user, company=company, job_title=job_title, job_description=job_description)
                     return redirect('home')
             context = {'form': form}
             return render(request,'post.html',context)
+
+    return redirect('home')
+
+
+# Request referral
+def RequestPage(request):
+    if request.user.is_authenticated:
+        candidate_login = Candidate.objects.filter(user=request.user)
+        if candidate_login:
+            form = RequestForm()
+            opening_id = request.GET.get('openingid')
+            opening = Opening.objects.get(pk=opening_id)
+            if request.method == 'POST':
+                form = RequestForm(request.POST,request.FILES)
+                if form.is_valid():
+                    app_info, resume = form.save()
+                    Referral.objects.create(applicant=request.user,opening=opening, app_info=app_info, resume=resume)
+                    return redirect('home')
+            context = {'form': form}
+            return render(request,'request_ref.html',context)
 
     return redirect('home')

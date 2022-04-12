@@ -4,29 +4,33 @@
 {% block content %}
 <h1>Hello {{recruiter.name}}</h1>
 <div class="container card">
-    <h2>Jobs posted</h2>
+    <h2>Openings posted</h2>
     <div class="card-body">
         <table class="table table-hover">
             <tr>
                 <th>Job title</th>
                 <th>Company</th>
-                <th>Location</th>
-                <th>Job id</th>
-                <th>Total applicants</th>
+                <th>Job description</th>
+                <th>Status</th>
+                <th>Total referrals requested</th>
+                <th></th>
             </tr>
-            {% for job in jobs %}
+            {% for opening in openings %}
             <tr>
-                <td>{{job.job_title}}</td>
-                <td>{{job.company}}</td>
-                <td>{{job.location}}</td>
-                <td>{{job.job_id}}</td>
+                <td>{{opening.job_title}}</td>
+                <td>{{opening.company}}</td>
+                <td>{{opening.job_description}}</td>
+                <td>{{opening.status}}</td>
                 <td>
-                    <a href="hrapplicants/?jobid={{ job.job_id}}">{{ job.apps | length}}</a>
+                    <a href="hrapplicants/?openingid={{opening.pk}}">{{ opening.refs | length}}</a>
+                </td>
+                <td>
+                    <a href="hrapplicants/edit?openingid={{opening.pk}}">edit</a>
                 </td>
             </tr>
             {% endfor %}
         </table>
     </div>
 </div>
-<span><a class="user" href="{% url 'post' %}">Post a new job</a></span>
+<span><a class="user" href="{% url 'post' %}">Post a new opening</a></span>
 {% endblock %}

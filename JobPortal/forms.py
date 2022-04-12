@@ -12,10 +12,11 @@ class CandidateCreationForm(UserCreationForm):
     email = forms.EmailField(label='email')
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
+    # resume = forms.FileField(label='Resume', required=False)
 
     class Meta:
     # class Meta(UserCreationForm.Meta):
-        model = Candidates
+        model = Candidate
         # model = User
         fields = ('username', 'name', 'email', 'password1')
         # fields = UserCreationForm.Meta.fields + fields
@@ -94,17 +95,32 @@ class RecruiterCreationForm(UserCreationForm):
         return user, self.cleaned_data['name']
 
 
+# Opening post form
 class PostForm(ModelForm):
     class Meta:
-        model = Jobs
-        fields = ("job_title", "company", "location")
+        model = Opening
+        fields = ("company", "job_title", "job_description")
+
+    # TODO: "company" should be non-null
+    def save(self):
+        return self.cleaned_data['company'], self.cleaned_data['job_title'], self.cleaned_data['job_description']
+
+
+# Edit the opening
+class EditForm(ModelForm):
+    class Meta:
+        model = Opening
+        fields = ("company", "job_title", "job_description", "status")
 
     def save(self):
-        return self.cleaned_data['job_title'], self.cleaned_data['company'], self.cleaned_data['location']
+        return self.cleaned_data['company'], self.cleaned_data['job_title'], self.cleaned_data['job_description'], self.cleaned_data['status']
 
 
-class ApplyForm(forms.Form):
-    pk = forms.IntegerField(label='Job Id to apply')
+# Referral request form
+class RequestForm(ModelForm):
+    class Meta:
+        model = Referral
+        fields = ("app_info", "resume")
 
     def save(self):
-        return self.cleaned_data['pk']
+        return self.cleaned_data['app_info'], self.cleaned_data['resume']

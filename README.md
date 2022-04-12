@@ -21,7 +21,7 @@ where SECRET_KEY should end with =
 Try this online key generator [CodeIgniter Encryption Keys](https://randomkeygen.com/#ci_key), then add an equal sign at the end.
 
 If everthing works, you should be able to see this
-![](demo_screenshot.png)
+![](assets/demo_screenshot.png)
 
 
 ## Django admin
@@ -35,6 +35,7 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 ## Todos
 - [ ] private message
 - [ ] email notification when the status changed
+- [ ] pressure test
 - [ ] Test deploy on heroku
 
 
