@@ -1,0 +1,248 @@
+[
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$320000$qOuqBPanBatpgRlwQh818h$uK1zvePQJKBmAlvmz0sPu3q42jGtKdDtT69XUXUBW/8=",
+    "last_login": "2022-04-12T19:34:51.198Z",
+    "is_superuser": true,
+    "username": "wei",
+    "first_name": "",
+    "last_name": "",
+    "email": "",
+    "is_staff": true,
+    "is_active": true,
+    "date_joined": "2022-04-11T19:10:22.586Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$320000$sKJrAAgXaDAPzxJs6VoY2F$He1Gz6gO1qfZtGaEZhjuCmIVWM2hS6dotr7M+C+pQc8=",
+    "last_login": "2022-04-12T19:24:35.687Z",
+    "is_superuser": false,
+    "username": "can01",
+    "first_name": "",
+    "last_name": "",
+    "email": "can01@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-04-11T19:11:21.803Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$320000$z4xTIPXSmsXM0UDBHFFPNs$IO2hEQqcwK/liKpKJYDFwX6a4lYnBxTft2XAoEC9HpU=",
+    "last_login": "2022-04-12T19:48:08.818Z",
+    "is_superuser": false,
+    "username": "rec01",
+    "first_name": "",
+    "last_name": "",
+    "email": "rec01@gmail.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-04-11T19:19:42.858Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "auth.user",
+  "fields": {
+    "password": "pbkdf2_sha256$320000$eYybgyrWJVTl48nENpT0RF$5sDLjwNb48RlBeAJ38xvzg+cut+v7Z3zRlnoXo9sqVU=",
+    "last_login": "2022-04-12T19:43:26.659Z",
+    "is_superuser": false,
+    "username": "can02",
+    "first_name": "",
+    "last_name": "",
+    "email": "kristen@gamil.com",
+    "is_staff": false,
+    "is_active": true,
+    "date_joined": "2022-04-11T22:21:44.727Z",
+    "groups": [],
+    "user_permissions": []
+  }
+},
+{
+  "model": "JobPortal.recruiter",
+  "pk": 1,
+  "fields": {
+    "user": [
+      "rec01"
+    ],
+    "name": "Steve Jobs",
+    "email": "rec01@gmail.com",
+    "email_notification": false
+  }
+},
+{
+  "model": "JobPortal.candidate",
+  "pk": 2,
+  "fields": {
+    "user": [
+      "can01"
+    ],
+    "name": "John",
+    "email": "can01@gmail.com",
+    "resume": "resume1_xQ31dC6.pdf",
+    "email_notification": false
+  }
+},
+{
+  "model": "JobPortal.candidate",
+  "pk": 3,
+  "fields": {
+    "user": [
+      "can02"
+    ],
+    "name": "Kristen",
+    "email": "kristen@gamil.com",
+    "resume": "resume2.pdf",
+    "email_notification": false
+  }
+},
+{
+  "model": "JobPortal.opening",
+  "pk": 2,
+  "fields": {
+    "recruiter": [
+      "rec01"
+    ],
+    "company": "Oracle",
+    "job_title": "SDE II",
+    "job_description": "software development engineer",
+    "status": "open"
+  }
+},
+{
+  "model": "JobPortal.opening",
+  "pk": 3,
+  "fields": {
+    "recruiter": [
+      "rec01"
+    ],
+    "company": "Oracle",
+    "job_title": "HR",
+    "job_description": "Human Resources",
+    "status": "open"
+  }
+},
+{
+  "model": "JobPortal.opening",
+  "pk": 4,
+  "fields": {
+    "recruiter": [
+      "rec01"
+    ],
+    "company": "Oracle",
+    "job_title": "Cyber Security Defense",
+    "job_description": "Defend any cyber attach",
+    "status": "open"
+  }
+},
+{
+  "model": "JobPortal.referral",
+  "pk": 1,
+  "fields": {
+    "applicant": [
+      "can01"
+    ],
+    "opening": 2,
+    "app_info": "I'd like to request a referral",
+    "resume": "resume1.pdf",
+    "status": "processed"
+  }
+},
+{
+  "model": "JobPortal.referral",
+  "pk": 2,
+  "fields": {
+    "applicant": [
+      "can02"
+    ],
+    "opening": 2,
+    "app_info": "Hi this is Kristen, I'm interested in this job",
+    "resume": "resume1_TUkE0XU.pdf",
+    "status": "processed"
+  }
+},
+{
+  "model": "JobPortal.referral",
+  "pk": 3,
+  "fields": {
+    "applicant": [
+      "can02"
+    ],
+    "opening": 3,
+    "app_info": "I used to be the manager of Walmart.",
+    "resume": "resume2_I4oN5QA.pdf",
+    "status": "processed"
+  }
+},
+{
+  "model": "JobPortal.referral",
+  "pk": 4,
+  "fields": {
+    "applicant": [
+      "can01"
+    ],
+    "opening": 3,
+    "app_info": "I'm currently the manager in Coke Cola",
+    "resume": "resume1_pnU2iit.pdf",
+    "status": "unprocessed"
+  }
+},
+{
+  "model": "JobPortal.referral",
+  "pk": 5,
+  "fields": {
+    "applicant": [
+      "can02"
+    ],
+    "opening": 4,
+    "app_info": "test",
+    "resume": "resume2.pdf",
+    "status": "unprocessed"
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 1,
+  "fields": {
+    "action_time": "2022-04-11T19:10:53.171Z",
+    "user": [
+      "wei"
+    ],
+    "content_type": [
+      "auth",
+      "user"
+    ],
+    "object_id": "1",
+    "object_repr": "can01",
+    "action_flag": 3,
+    "change_message": ""
+  }
+},
+{
+  "model": "admin.logentry",
+  "pk": 2,
+  "fields": {
+    "action_time": "2022-04-11T19:47:48.701Z",
+    "user": [
+      "wei"
+    ],
+    "content_type": [
+      "JobPortal",
+      "opening"
+    ],
+    "object_id": "1",
+    "object_repr": "SDE",
+    "action_flag": 3,
+    "change_message": ""
+  }
+}
+]

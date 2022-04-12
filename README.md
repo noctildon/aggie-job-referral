@@ -7,7 +7,7 @@
 3. cd aggie-job-referral
 4. pip install -r requirements.txt
 5. python manage.py migrate --run-syncdb
-6. python manage.py loaddata dump2.json
+6. python manage.py loaddata dump.json
 7. python manage.py runserver
 8. Open the url 127.0.0.1:8000 (or any url returned by the prompt)
 
@@ -33,9 +33,6 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
-- [ ] fix the default resume when requesting a referral
-- [ ] private message
-- [x] email notification when the status changed
 - [ ] pressure test
 - [ ] Test deploy on heroku
 

@@ -50,7 +50,9 @@ class Referral(models.Model):
 
     REFERRAL_STATUS = Choices('unprocessed', 'processed')
     def __str__(self):
-        return self.applicant
+        candidate_user = self.applicant
+        candidate = Candidate.objects.get(user=candidate_user)
+        return candidate.name
 
 
 # class Job(models.Model):

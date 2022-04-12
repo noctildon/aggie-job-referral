@@ -95,7 +95,6 @@ def Dashboard(request):
 
             initial = {'email_notification': recruiter.email_notification}
             form = DashboardFormRecruiter(initial=initial)
-
             if request.method == 'POST':
                 form = DashboardFormRecruiter(request.POST,request.FILES)
                 if form.is_valid():
@@ -270,7 +269,7 @@ def RequestPage(request):
             opening_id = request.GET.get('openingid')
             opening = Opening.objects.get(pk=opening_id)
             if request.method == 'POST':
-                form = RequestForm(request.POST,request.FILES)
+                form = RequestForm(request.POST,request.FILES,initial=initial)
                 if form.is_valid():
                     app_info, resume = form.save()
                     Referral.objects.create(applicant=request.user,opening=opening, app_info=app_info, resume=resume)
