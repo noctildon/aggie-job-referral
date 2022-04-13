@@ -30,7 +30,7 @@ class Candidate(models.Model):
 
 
 class Opening(models.Model):
-    recruiter = models.ForeignKey(User, on_delete=models.CASCADE)
+    recruiter = models.ForeignKey(Recruiter, on_delete=models.CASCADE)
     company = models.CharField(max_length=200, null=True)
     job_title = models.CharField(max_length=200,null=True)
     job_description = models.CharField(max_length=200,null=True)
@@ -42,7 +42,7 @@ class Opening(models.Model):
 
 
 class Referral(models.Model):
-    applicant = models.ForeignKey(User, on_delete=models.CASCADE)
+    applicant = models.ForeignKey(Candidate, on_delete=models.CASCADE)
     opening = models.ForeignKey(Opening, on_delete=models.CASCADE)
     app_info = models.CharField(max_length=200, null=True) # eg. job title, id, link, descripion, and self-intro, etc
     resume = models.FileField(null=True) # PDF
@@ -50,9 +50,7 @@ class Referral(models.Model):
 
     REFERRAL_STATUS = Choices('unprocessed', 'processed')
     def __str__(self):
-        candidate_user = self.applicant
-        candidate = Candidate.objects.get(user=candidate_user)
-        return candidate.name
+        return self.applicant.name
 
 
 # class Job(models.Model):

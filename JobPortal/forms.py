@@ -12,14 +12,10 @@ class CandidateCreationForm(UserCreationForm):
     email = forms.EmailField(label='email')
     password1 = forms.CharField(label='password', widget=forms.PasswordInput)
     password2 = forms.CharField(label='Confirm password', widget=forms.PasswordInput)
-    # resume = forms.FileField(label='Resume', required=False)
 
     class Meta:
-    # class Meta(UserCreationForm.Meta):
         model = Candidate
-        # model = User
         fields = ('username', 'name', 'email', 'password1')
-        # fields = UserCreationForm.Meta.fields + fields
 
     def username_clean(self):
         username = self.cleaned_data['username'].lower()
@@ -44,6 +40,10 @@ class CandidateCreationForm(UserCreationForm):
         return password2
 
     def save(self):
+        self.username_clean()
+        self.email_clean()
+        self.clean_password2()
+
         user = User.objects.create_user(
             self.cleaned_data['username'],
             email=self.cleaned_data['email'],
@@ -101,7 +101,6 @@ class PostForm(ModelForm):
         model = Opening
         fields = ("company", "job_title", "job_description")
 
-    # TODO: "company" should be non-null
     def save(self):
         return self.cleaned_data['company'], self.cleaned_data['job_title'], self.cleaned_data['job_description']
 
