@@ -1,5 +1,6 @@
-from django.urls import path
+from django.urls import path, include
 from .views import *
+
 
 urlpatterns = [
     path('',home,name='home'),
@@ -13,4 +14,5 @@ urlpatterns = [
     path('hrapplicants/edit', Edit, name='edit'),
     path('requestref/', RequestPage, name='requestref'),
     path('dashboard/', Dashboard, name='dashboard'),
+    path('changepwd/', ChangePwd, name='changepwd'),
 ]

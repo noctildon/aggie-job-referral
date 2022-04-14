@@ -11,6 +11,9 @@
             {{form.as_p}}
             <input type="submit" class="btn btn-success" value="Update">
         </form>
+    <br>
+    <p>Change password <a href='{% url "changepwd" %}'>here</a></p>
     </div>
 </div>
+<p>{{err_mesg}}</p>
 {% endblock %}

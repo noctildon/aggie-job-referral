@@ -21,7 +21,7 @@ class CandidateCreationForm(UserCreationForm):
         username = self.cleaned_data['username'].lower()
         new = User.objects.filter(username = username)
         if new.count():
-            raise ValidationError("User Already Exist")
+            raise ValidationError("Username Already Exist")
         return username
 
     def email_clean(self):
@@ -36,7 +36,7 @@ class CandidateCreationForm(UserCreationForm):
         password2 = self.cleaned_data['password2']
 
         if password1 and password2 and password1 != password2:
-            raise ValidationError("Password don't match")
+            raise ValidationError("Password doesn't match")
         return password2
 
     def save(self):
@@ -68,7 +68,7 @@ class RecruiterCreationForm(UserCreationForm):
         username = self.cleaned_data['username'].lower()
         new = User.objects.filter(username = username)
         if new.count():
-            raise ValidationError("User Already Exist")
+            raise ValidationError("Username Already Exist")
         return username
 
     def email_clean(self):
@@ -83,10 +83,14 @@ class RecruiterCreationForm(UserCreationForm):
         password2 = self.cleaned_data['password2']
 
         if password1 and password2 and password1 != password2:
-            raise ValidationError("Password don't match")
+            raise ValidationError("Password doesn't match")
         return password2
 
     def save(self):
+        self.username_clean()
+        self.email_clean()
+        self.clean_password2()
+
         user = User.objects.create_user(
             self.cleaned_data['username'],
             email=self.cleaned_data['email'],
@@ -129,17 +133,26 @@ class RequestForm(ModelForm):
 class DashboardFormCandidate(ModelForm):
     class Meta:
         model = Candidate
-        fields = ("resume", "email_notification")
+        fields = ("resume", "email", "email_notification")
 
     def save(self):
-        return self.cleaned_data['resume'], self.cleaned_data['email_notification']
+        return self.cleaned_data['resume'], self.cleaned_data['email'], self.cleaned_data['email_notification']
 
 
 # For recruiter
 class DashboardFormRecruiter(ModelForm):
     class Meta:
         model = Recruiter
-        fields = ("email_notification",)
+        fields = ("email", "email_notification",)
 
     def save(self):
-        return self.cleaned_data['email_notification']
+        return self.cleaned_data['email'], self.cleaned_data['email_notification']
+
+
+# class PwdChangeForm(ModelForm):
+#     class Meta:
+#         model = User
+#         fields = ("password",)
+
+#     def save(self):
+#         return self.cleaned_data['email'], self.cleaned_data['email_notification']

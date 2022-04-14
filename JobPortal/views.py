@@ -1,8 +1,10 @@
 from django.shortcuts import render,redirect
-from django.contrib.auth import login,logout,authenticate
 from django.forms.models import model_to_dict
-from django.http import FileResponse, Http404
+from django.contrib.auth import login,logout,authenticate,update_session_auth_hash
+from django.contrib.auth.forms import PasswordChangeForm
+from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
+from django.http import FileResponse, Http404
 from django.conf import settings
 from .models import *
 from .forms import *
@@ -63,7 +65,16 @@ def home(request):
         return render(request,'Jobseeker.html',context)
 
 
-# Dashboard
+# Check if the new email is registered by someone other than the user
+def duplicate_email_checking(new_email, user):
+    new_email_user = User.objects.filter(email=new_email)
+    if new_email_user:
+        if new_email_user[0] != user:
+            return True
+    return False
+
+
+# Dashboard for changing user settings, profile, etc
 def Dashboard(request):
     if request.user.is_authenticated:
         candidate_login = Candidate.objects.filter(user=request.user)
@@ -73,17 +84,25 @@ def Dashboard(request):
         if candidate_login:
             candidate = candidate_login[0]
 
-            initial = {'resume': candidate.resume, 'email_notification': candidate.email_notification}
+            initial = {'resume': candidate.resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
             form = DashboardFormCandidate(initial=initial)
+            err_mesg = ''
             if request.method == 'POST':
-                form = DashboardFormCandidate(request.POST,request.FILES)
+                form = DashboardFormCandidate(request.POST,request.FILES,initial=initial)
                 if form.is_valid():
-                    candidate.resume, candidate.email_notification = form.save()
-                    candidate.save()
+                    candidate.resume, new_email, candidate.email_notification = form.save()
 
-                    return redirect('home')
+                    if duplicate_email_checking(new_email, request.user):
+                        err_mesg = f'The email "{new_email}" has been registered by someone else. Please choose another email.'
+                    else:
+                        candidate.email = new_email
+                        candidate.save()
 
-            context = {'user': candidate, 'form': form}
+                        mesg = 'Updates sucessfully saved'
+                        context = {'mesg': mesg}
+                        return render(request, 'confirm.html', context)
+
+            context = {'user': candidate, 'form': form, 'err_mesg': err_mesg}
             return render(request,'dashboard.html', context)
         ###############################################################
 
@@ -91,16 +110,21 @@ def Dashboard(request):
         if recruiter_login:
             recruiter = recruiter_login[0]
 
-            initial = {'email_notification': recruiter.email_notification}
+            initial = {'email':recruiter.email, 'email_notification': recruiter.email_notification}
             form = DashboardFormRecruiter(initial=initial)
+            err_mesg = ''
             if request.method == 'POST':
-                form = DashboardFormRecruiter(request.POST,request.FILES)
+                form = DashboardFormRecruiter(request.POST,request.FILES,initial=initial)
                 if form.is_valid():
-                    recruiter.email_notification = form.save()
-                    recruiter.save()
-                    return redirect('home')
+                    new_email, recruiter.email_notification = form.save()
+                    if duplicate_email_checking(new_email, request.user):
+                        err_mesg = f'The email "{new_email}" has been registered by someone else. Please choose another email.'
+                    else:
+                        recruiter.email = new_email
+                        recruiter.save()
+                        return redirect('home')
 
-            context = {'user': recruiter, 'form': form}
+            context = {'user': recruiter, 'form': form, 'err_mesg': err_mesg}
             return render(request,'dashboard.html', context)
         ###############################################################
 
@@ -156,7 +180,7 @@ def Edit(request):
             initial = {'company': opening.company, 'job_title': opening.job_title, 'job_description': opening.job_description, 'status': opening.status}
             form = EditForm(initial=initial)
             if request.method == 'POST':
-                form = EditForm(request.POST,request.FILES)
+                form = EditForm(request.POST,request.FILES,initial=initial)
                 if form.is_valid():
                     opening.company, opening.job_title, opening.job_description, opening.status = form.save()
                     opening.save()
@@ -202,13 +226,17 @@ def registerCandidate(request):
         return redirect('home')
     else:
         Form = CandidateCreationForm()
+        err_mesg = ''
         if request.method == 'POST':
             Form = CandidateCreationForm(request.POST)
             if Form.is_valid():
-                currUser, name = Form.save()
-                Candidate.objects.create(user=currUser,name=name,email=currUser.email)
-                return redirect('login')
-        context = {'form': Form, 'role': 'Candidate'}
+                try:
+                    currUser, name = Form.save()
+                    Candidate.objects.create(user=currUser,name=name,email=currUser.email)
+                    return redirect('login')
+                except ValidationError as e:
+                    err_mesg = '; '.join(e.messages)
+        context = {'form': Form, 'role': 'Candidate', 'err_mesg': err_mesg}
         return render(request,'register.html',context)
 
 
@@ -218,13 +246,17 @@ def registerRecruiter(request):
         return redirect('home')
     else:
         Form = RecruiterCreationForm()
+        err_mesg = ''
         if request.method == 'POST':
             Form = RecruiterCreationForm(request.POST)
             if Form.is_valid():
-                currUser, name = Form.save()
-                Recruiter.objects.create(user=currUser,name=name, email=currUser.email)
-                return redirect('login')
-        context = {'form': Form, 'role': 'Recruiter/Empolyee'}
+                try:
+                    currUser, name = Form.save()
+                    Recruiter.objects.create(user=currUser,name=name, email=currUser.email)
+                    return redirect('login')
+                except ValidationError as e:
+                    err_mesg = '; '.join(e.messages)
+        context = {'form': Form, 'role': 'Recruiter/Empolyee', 'err_mesg': err_mesg}
         return render(request,'register.html',context)
 
 
@@ -273,6 +305,23 @@ def RequestPage(request):
 
     return redirect('home')
 
+
+def ChangePwd(request):
+    if request.user.is_authenticated:
+        form = PasswordChangeForm(user=request.user)
+        if request.method == 'POST':
+            form = PasswordChangeForm(user=request.user,data=request.POST)
+            if form.is_valid():
+                form.save()
+                update_session_auth_hash(request, form.user)
+                mesg = 'Password sucessfully changed'
+                context = {'mesg': mesg}
+                return render(request, 'confirm.html', context)
+
+        context = {'form': form}
+        return render(request,'change_pwd.html', context)
+
+    return redirect('home')
 
 
 def send_email2recruiter(recruiter, testing=True):

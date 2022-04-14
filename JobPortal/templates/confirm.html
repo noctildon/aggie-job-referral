@@ -1,0 +1,7 @@
+{% extends 'main.html' %}
+{% load static%}
+
+{% block content %}
+<h1>{{mesg}}</h1>
+<p>Click <a href='{% url "home" %}'>here</a> to home</p>
+{% endblock %}
