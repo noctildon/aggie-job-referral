@@ -34,7 +34,7 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
-- [ ] retrieve the forgotten password (https://dev.to/earthcomfy/django-reset-password-3k0l)
+- [x] retrieve the forgotten password (https://dev.to/earthcomfy/django-reset-password-3k0l)
 - [x] make form to change email, password, etc
 - [x] handle the duplicate email and username
 - [ ] security check

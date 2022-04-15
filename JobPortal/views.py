@@ -1,7 +1,10 @@
 from django.shortcuts import render,redirect
 from django.forms.models import model_to_dict
+from django.urls import reverse_lazy
 from django.contrib.auth import login,logout,authenticate,update_session_auth_hash
 from django.contrib.auth.forms import PasswordChangeForm
+from django.contrib.auth.views import PasswordResetView
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail
 from django.http import FileResponse, Http404
@@ -322,6 +325,17 @@ def ChangePwd(request):
         return render(request,'change_pwd.html', context)
 
     return redirect('home')
+
+
+class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
+    template_name = 'password_reset.html'
+    email_template_name = 'password_reset_email.html'
+    subject_template_name = 'password_reset_subject.txt'
+    success_message = \
+    """We've emailed you instructions for re-setting your password.
+        If an account exists with the email you entered. You should receive an email shortly.
+        If you don't receive, please make sure you entered the address you registered with, and also check your spam folder."""
+    success_url = reverse_lazy('password_reset_done')
 
 
 def send_email2recruiter(recruiter, testing=True):
