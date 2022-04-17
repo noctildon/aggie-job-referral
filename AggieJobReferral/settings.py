@@ -40,7 +40,7 @@ else:
     DEBUG = False
 
 # NOTE: We may need to add the heroku url
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['.herokuapp.com']
 
 # Application definition
 
