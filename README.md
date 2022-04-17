@@ -34,15 +34,10 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
-- [x] retrieve the forgotten password (https://dev.to/earthcomfy/django-reset-password-3k0l)
-- [x] make form to change email, password, etc
-- [x] handle the duplicate email and username
-- [ ] security check
-- [ ] pressure test
 - [ ] Test deploy on heroku
+- [ ] pressure test (unnecessary until a bottleneck is observed)
 
 
 ## **Before Deploy on heroku**
-- [ ] Django security check
-- [ ] change LOCAL_RUNNING in AggieJobReferral/settings.py to False
-- [ ] change testing to False in email sending functions
+- [ ] set LOCAL_RUNNING=False in AggieJobReferral/settings.py
+- [ ] set EMAIL_NOTIF=True in AggieJobReferral/settings.py

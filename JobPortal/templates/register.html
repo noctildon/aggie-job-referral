@@ -11,5 +11,10 @@
         <p>Already have an account? Login <a href='{% url "login" %}'>here</a></p>
     </form>
 </div>
-<p>{{err_mesg}}</p>
+{% if err_mesg %}
+<div class="alert alert-warning" role="alert">
+    {{err_mesg}}
+</div>
+{% endif %}
+
 {% endblock %}

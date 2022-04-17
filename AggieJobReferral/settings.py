@@ -51,7 +51,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'JobPortal.apps.JobportalConfig',
-
 ]
 
 MIDDLEWARE = [
@@ -90,6 +89,7 @@ EMAIL_PORT = int(os.getenv('EMAIL_PORT'))
 EMAIL_USE_TLS = eval(os.getenv('EMAIL_USE_TLS'))
 EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
+EMAIL_NOTIF = False # email notification switch
 
 # ADMIN EMAIL
 ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')

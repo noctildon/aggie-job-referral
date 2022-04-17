@@ -15,5 +15,17 @@
     <p>Change password <a href='{% url "changepwd" %}'>here</a></p>
     </div>
 </div>
-<p>{{err_mesg}}</p>
+
+{% if info_mesg %}
+<div class="alert alert-primary" role="alert">
+    {{info_mesg}}
+</div>
+{% endif %}
+
+{% if err_mesg %}
+<div class="alert alert-warning" role="alert">
+    {{err_mesg}}
+</div>
+{% endif %}
+
 {% endblock %}

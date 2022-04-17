@@ -89,6 +89,7 @@ def Dashboard(request):
 
             initial = {'resume': candidate.resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
             form = DashboardFormCandidate(initial=initial)
+            info_mesg = 'Please note that your resume may be accessible to anyone.'
             err_mesg = ''
             if request.method == 'POST':
                 form = DashboardFormCandidate(request.POST,request.FILES,initial=initial)
@@ -105,7 +106,7 @@ def Dashboard(request):
                         context = {'mesg': mesg}
                         return render(request, 'confirm.html', context)
 
-            context = {'user': candidate, 'form': form, 'err_mesg': err_mesg}
+            context = {'user': candidate, 'form': form, 'err_mesg': err_mesg, 'info_mesg': info_mesg}
             return render(request,'dashboard.html', context)
         ###############################################################
 
@@ -151,7 +152,7 @@ def hrApplicants(request):
                 ref.save()
 
                 # sending email notification to candidate
-                send_email2candidate(ref.applicant)
+                sendEmail2candidate(ref.applicant)
             except:
                 pass
 
@@ -301,7 +302,7 @@ def RequestPage(request):
                     app_info, resume = form.save()
                     Referral.objects.create(applicant=candidate,opening=opening, app_info=app_info, resume=resume)
 
-                    send_email2recruiter(opening.recruiter)
+                    sendEmail2recruiter(opening.recruiter)
                     return redirect('home')
             context = {'form': form}
             return render(request,'request_ref.html',context)
@@ -338,36 +339,29 @@ class ResetPasswordView(SuccessMessageMixin, PasswordResetView):
     success_url = reverse_lazy('password_reset_done')
 
 
-def send_email2recruiter(recruiter, testing=True):
+def sendEmail2recruiter(recruiter):
     subject = 'A referral request is submitted.'
     message = f'Dear {recruiter.name},\nThere is recently new referral request. Please check the AJR website.'
 
-    if testing:
-        print('subject', subject)
-        print('message', message)
-        print('email to', recruiter.email)
+    if recruiter.email_notification and settings.EMAIL_NOTIF:
+        send_mail(subject, message, from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[recruiter.email], fail_silently=False)
         return
 
-    if recruiter.email_notification:
-        send_mail(subject, message,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[recruiter.email],
-            fail_silently=False)
+    print('subject:', subject)
+    print('message:', message)
+    print('email to', recruiter.email)
 
 
-
-def send_email2candidate(candidate, testing=True):
+def sendEmail2candidate(candidate):
     subject = 'Your referral request gets processed!!'
     message = f'Dear {candidate.name},\nYour referral request gets processed!! Wait for more from the recruiter.'
 
-    if testing:
-        print('subject', subject)
-        print('message', message)
-        print('email to', candidate.email)
+    if candidate.email_notification and settings.EMAIL_NOTIF:
+        send_mail(subject, message, from_email=settings.EMAIL_HOST_USER,
+            recipient_list=[candidate.email], fail_silently=False)
         return
 
-    if candidate.email_notification:
-        send_mail(subject, message,
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[candidate.email],
-            fail_silently=False)
+    print('subject:', subject)
+    print('message:', message)
+    print('email to', candidate.email)
