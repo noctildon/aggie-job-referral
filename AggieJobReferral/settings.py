@@ -36,6 +36,7 @@ if LOCAL_RUNNING:
     DEBUG = True
 else:
     # SECURITY WARNING: don't run with debug turned on in production!
+    load_dotenv()
     DEBUG = False
 
 # NOTE: We may need to add the heroku url
