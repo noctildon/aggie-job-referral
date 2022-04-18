@@ -47,7 +47,13 @@ else:
     DEBUG = False
 
 # NOTE: We may need to add the heroku url
-ALLOWED_HOSTS = ['.herokuapp.com']
+ALLOWED_HOSTS = ['https://boiling-hollows-75833.herokuapp.com/']
+
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://boiling-hollows-75833.herokuapp.com/'
+]
+
 
 # Application definition
 
