@@ -49,6 +49,12 @@ else:
 # NOTE: We may need to add the heroku url
 ALLOWED_HOSTS = ['.herokuapp.com']
 
+
+CSRF_TRUSTED_ORIGINS = [
+    '.herokuapp.com'
+]
+
+
 # Application definition
 
 INSTALLED_APPS = [
