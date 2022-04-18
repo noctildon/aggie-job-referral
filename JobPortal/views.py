@@ -87,7 +87,10 @@ def Dashboard(request):
         if candidate_login:
             candidate = candidate_login[0]
 
-            initial = {'resume': candidate.resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
+            initial_resume = candidate.resume
+            # initial = {'email':candidate.email, 'email_notification': candidate.email_notification}
+            initial = {'resume': initial_resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
+
             form = DashboardFormCandidate(initial=initial)
             info_mesg = 'Please note that your resume may be accessible to anyone.'
             err_mesg = ''
@@ -198,11 +201,15 @@ def Edit(request):
 
 
 def pdf_view(request):
-    try:
-        link =  request.GET.get('link')
-        return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
-    except FileNotFoundError:
-        raise Http404()
+    if request.user.is_authenticated:
+        try:
+            link =  request.GET.get('link')
+            return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+        except FileNotFoundError:
+            raise Http404()
+
+    # raise Http404()
+    return redirect('home')
 
 
 def logoutUser(request):
@@ -222,6 +229,18 @@ def loginUser(request):
                 login(request,user)
                 return redirect('home')
         return render(request,'login.html')
+
+
+# User type recognition: candidate or recruiter
+def userRecog(user):
+    recruiter = Recruiter.objects.filter(user=user)
+    candidate = Candidate.objects.filter(user=user)
+    if recruiter:
+        return 'recruiter', recruiter[0]
+    if candidate:
+        return 'candidate', candidate[0]
+    return None
+
 
 
 # Candidate registration

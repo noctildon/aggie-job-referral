@@ -6,9 +6,17 @@
 <div class="container card">
     <br>
     <div class="card-body">
+        <a href="/resumes?link=resume1.pdf">Current resume</a> <br><br>
         <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{form.as_p}}
+
+            <label>New resume:</label> <div>{{form.resume}}</div>
+            <br><br>
+
+            <label>New email address:</label> {{form.email}} <br><br>
+            <label>Email notification</label> {{form.email_notification}} <br><br>
+
+            <!-- {{form.as_p}} -->
             <input type="submit" class="btn btn-success" value="Update">
         </form>
     <br>
