@@ -204,7 +204,7 @@ def Edit(request):
 
 
 # Not that secure, but still acceptable
-def pdf_view(request):
+def pdf_view_less_secure(request):
     if request.user.is_authenticated:
         try:
             link = request.GET.get('link')
@@ -215,7 +215,7 @@ def pdf_view(request):
 
 
 
-def pdf_view_more_secure(request):
+def pdf_view(request):
     if request.user.is_authenticated:
         user_type, user = userRecog(request.user)
         if user_type == 'candidate':
