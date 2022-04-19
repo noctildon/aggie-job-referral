@@ -35,7 +35,6 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 ## Todos
 - [ ] Test deploy on heroku
-- [x] Migrate to postgres
 - [ ] pressure test (unnecessary until a bottleneck is observed)
 
 
