@@ -41,7 +41,7 @@
                 <td>{{ref.app_email}}</td>
                 <td>{{ref.app_info}}</td>
                 <td>
-                    <a href="resumes?link={{ref.resume}}">pdf link</a>
+                    <a href="resumes?openingid={{opening.pk}}&link={{ref.resume}}">pdf link</a>
                 </td>
                 <td>
                     {% if ref.status == 'unprocessed' %}

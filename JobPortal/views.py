@@ -15,13 +15,11 @@ from .forms import *
 
 def home(request):
     if request.user.is_authenticated:
-        candidate_login = Candidate.objects.filter(user=request.user)
-        recruiter_login = Recruiter.objects.filter(user=request.user)
-
+        user_type, user = userRecog(request.user)
 
         ###################### Candidate session ######################
-        if candidate_login:
-            candidate = candidate_login[0]
+        if user_type == 'candidate':
+            candidate = user
             openings = Opening.objects.all()
 
             # Filter the openings that the candidate has applied
@@ -44,8 +42,8 @@ def home(request):
 
 
         ###################### Recruiter session ######################
-        if recruiter_login:
-            recruiter = recruiter_login[0]
+        if user_type == 'recruiter':
+            recruiter = user
             openings = Opening.objects.filter(recruiter=recruiter)
 
             openings_ = []
@@ -80,14 +78,18 @@ def duplicate_email_checking(new_email, user):
 # Dashboard for changing user settings, profile, etc
 def Dashboard(request):
     if request.user.is_authenticated:
-        candidate_login = Candidate.objects.filter(user=request.user)
-        recruiter_login = Recruiter.objects.filter(user=request.user)
+        user_type, user = userRecog(request.user)
 
         ###################### Candidate session ######################
-        if candidate_login:
-            candidate = candidate_login[0]
+        if user_type == 'candidate':
+            candidate = user
 
-            initial = {'resume': candidate.resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
+            initial_resume = candidate.resume
+            # initial = {'email':candidate.email, 'email_notification': candidate.email_notification}
+            initial = {'resume': initial_resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
+
+            print('name', initial_resume.name)
+
             form = DashboardFormCandidate(initial=initial)
             info_mesg = 'Please note that your resume may be accessible to anyone.'
             err_mesg = ''
@@ -106,13 +108,14 @@ def Dashboard(request):
                         context = {'mesg': mesg}
                         return render(request, 'confirm.html', context)
 
-            context = {'user': candidate, 'form': form, 'err_mesg': err_mesg, 'info_mesg': info_mesg}
+            context = {'user': candidate, 'form': form, 'resume_name': initial_resume.name,
+                    'err_mesg': err_mesg, 'info_mesg': info_mesg}
             return render(request,'dashboard.html', context)
         ###############################################################
 
         ###################### Recruiter session ######################
-        if recruiter_login:
-            recruiter = recruiter_login[0]
+        if user_type == 'recruiter':
+            recruiter = user
 
             initial = {'email':recruiter.email, 'email_notification': recruiter.email_notification}
             form = DashboardFormRecruiter(initial=initial)
@@ -128,7 +131,7 @@ def Dashboard(request):
                         recruiter.save()
                         return redirect('home')
 
-            context = {'user': recruiter, 'form': form, 'err_mesg': err_mesg}
+            context = {'user': recruiter, 'form': form, 'err_mesg': err_mesg, 'rec': True}
             return render(request,'dashboard.html', context)
         ###############################################################
 
@@ -138,11 +141,14 @@ def Dashboard(request):
 # View the applicants' requests
 def hrApplicants(request):
     if request.user.is_authenticated:
-        recruiter_login = Recruiter.objects.filter(user=request.user)
-        if recruiter_login:
-            recruiter = recruiter_login[0]
+        user_type, user = userRecog(request.user)
+        if user_type == 'recruiter':
+            recruiter = user
             opening_id = request.GET['openingid']
+            opening = Opening.objects.get(pk=opening_id)
 
+            if opening.recruiter != user:
+                return redirect('home')
 
             # Marking the referral 'processed'
             try:
@@ -176,10 +182,13 @@ def hrApplicants(request):
 # Edit the opening
 def Edit(request):
     if request.user.is_authenticated:
-        recruiter_login = Recruiter.objects.filter(user=request.user)
-        if recruiter_login:
+        user_type, user = userRecog(request.user)
+        if user_type == 'recruiter':
             opening_id = request.GET.get('openingid')
             opening = Opening.objects.get(pk=opening_id)
+
+            if opening.recruiter != user:
+                return redirect('home')
 
             initial = {'company': opening.company, 'job_title': opening.job_title, 'job_description': opening.job_description, 'status': opening.status}
             form = EditForm(initial=initial)
@@ -197,12 +206,43 @@ def Edit(request):
     return redirect('home')
 
 
+# Not that secure, but still acceptable
+def pdf_view_less_secure(request):
+    if request.user.is_authenticated:
+        try:
+            link = request.GET.get('link')
+            return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+        except:
+            raise Http404()
+    return redirect('home')
+
+
+
 def pdf_view(request):
-    try:
-        link =  request.GET.get('link')
-        return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
-    except FileNotFoundError:
-        raise Http404()
+    if request.user.is_authenticated:
+        user_type, user = userRecog(request.user)
+        if user_type == 'candidate':
+            try:
+                link =  request.GET.get('link')
+                candidate_with_resume = Candidate.objects.get(resume=link)
+                if candidate_with_resume != user:
+                    raise Http404()
+                return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+            except:
+                raise Http404()
+
+
+        if user_type == 'recruiter':
+            try:
+                link = request.GET.get('link')
+                opening_id = request.GET.get('openingid')
+                opening = Opening.objects.get(pk=opening_id)
+                if opening.recruiter != user:
+                    raise Http404()
+                return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+            except:
+                raise Http404()
+    return redirect('home')
 
 
 def logoutUser(request):
@@ -222,6 +262,18 @@ def loginUser(request):
                 login(request,user)
                 return redirect('home')
         return render(request,'login.html')
+
+
+# User type recognition: candidate or recruiter
+def userRecog(user):
+    recruiter = Recruiter.objects.filter(user=user)
+    candidate = Candidate.objects.filter(user=user)
+    if recruiter:
+        return 'recruiter', recruiter[0]
+    if candidate:
+        return 'candidate', candidate[0]
+    return None
+
 
 
 # Candidate registration
@@ -267,9 +319,9 @@ def registerRecruiter(request):
 # Post opening
 def PostPage(request):
     if request.user.is_authenticated:
-        recruiter_login = Recruiter.objects.filter(user=request.user)
-        if recruiter_login:
-            recruiter = recruiter_login[0]
+        user_type, user = userRecog(request.user)
+        if user_type == 'recruiter':
+            recruiter = user
             form = PostForm()
             if request.method == 'POST':
                 form = PostForm(request.POST,request.FILES)
@@ -287,9 +339,9 @@ def PostPage(request):
 # Request referral
 def RequestPage(request):
     if request.user.is_authenticated:
-        candidate_login = Candidate.objects.filter(user=request.user)
-        if candidate_login:
-            candidate = candidate_login[0]
+        user_type, user = userRecog(request.user)
+        if user_type == 'candidate':
+            candidate = user
 
             initial = {'resume': candidate.resume}
             form = RequestForm(initial=initial)

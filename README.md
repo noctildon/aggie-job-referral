@@ -35,7 +35,8 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 ## Todos
 - [ ] Test deploy on heroku
-- [ ] Migrate to postgres
+- [ ] Clean the data in database
+- [ ] Use more secure pdf_view
 - [ ] pressure test (unnecessary until a bottleneck is observed)
 
 

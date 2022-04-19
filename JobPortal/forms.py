@@ -1,4 +1,4 @@
-from django.forms import ModelForm
+from django.forms import ModelForm, FileInput
 from .models import *
 from django import forms
 from django.contrib.auth.models import User
@@ -134,6 +134,10 @@ class DashboardFormCandidate(ModelForm):
     class Meta:
         model = Candidate
         fields = ("resume", "email", "email_notification")
+        widgets = {
+            'resume': FileInput(attrs={
+                'class': "resume-form",
+                }),}
 
     def save(self):
         return self.cleaned_data['resume'], self.cleaned_data['email'], self.cleaned_data['email_notification']

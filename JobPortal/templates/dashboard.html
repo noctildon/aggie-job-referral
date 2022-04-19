@@ -8,7 +8,17 @@
     <div class="card-body">
         <form action="" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
-            {{form.as_p}}
+
+            {% if not rec %}
+            <a href="/resumes?link={{resume_name}}">Current resume</a> <br><br>
+            <label>New resume:</label> <div>{{form.resume}}</div>
+            <br>
+            {% endif %}
+
+            <label>New email address:</label> {{form.email}} <br><br>
+            <label>Email notification</label> {{form.email_notification}} <br><br>
+
+            <!-- {{form.as_p}} -->
             <input type="submit" class="btn btn-success" value="Update">
         </form>
     <br>
