@@ -203,7 +203,19 @@ def Edit(request):
     return redirect('home')
 
 
+# Not that secure, but still acceptable
 def pdf_view(request):
+    if request.user.is_authenticated:
+        try:
+            link = request.GET.get('link')
+            return FileResponse(open('media/'+link, 'rb'), content_type='application/pdf')
+        except:
+            raise Http404()
+    return redirect('home')
+
+
+
+def pdf_view_more_secure(request):
     if request.user.is_authenticated:
         user_type, user = userRecog(request.user)
         if user_type == 'candidate':
