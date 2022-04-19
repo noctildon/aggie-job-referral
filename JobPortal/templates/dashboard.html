@@ -10,7 +10,7 @@
             {% csrf_token %}
 
             {% if not rec %}
-            <a href="/resumes?link=resume1.pdf">Current resume</a> <br><br>
+            <a href="/resumes?link={{resume_name}}">Current resume</a> <br><br>
             <label>New resume:</label> <div>{{form.resume}}</div>
             <br>
             {% endif %}

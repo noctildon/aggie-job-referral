@@ -88,6 +88,8 @@ def Dashboard(request):
             # initial = {'email':candidate.email, 'email_notification': candidate.email_notification}
             initial = {'resume': initial_resume, 'email':candidate.email, 'email_notification': candidate.email_notification}
 
+            print('name', initial_resume.name)
+
             form = DashboardFormCandidate(initial=initial)
             info_mesg = 'Please note that your resume may be accessible to anyone.'
             err_mesg = ''
@@ -106,7 +108,8 @@ def Dashboard(request):
                         context = {'mesg': mesg}
                         return render(request, 'confirm.html', context)
 
-            context = {'user': candidate, 'form': form, 'err_mesg': err_mesg, 'info_mesg': info_mesg}
+            context = {'user': candidate, 'form': form, 'resume_name': initial_resume.name,
+                    'err_mesg': err_mesg, 'info_mesg': info_mesg}
             return render(request,'dashboard.html', context)
         ###############################################################
 
