@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@500&family=Poppins&display=swap');
+.links li {
+  padding: 0px 20px;
+}
+
+.links li a {
+  transition: all 0.3s ease 0s;
+}
+
+.links li a:hover {
+  color: #0088a9;
+}
+
+.link-text{
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.logo{
+  color: maroon;
+  font-size: 40px;
+}
+.logo-text{
+  font-family: 'Oswald', sans-serif;
+  font-size: 40px;
+}

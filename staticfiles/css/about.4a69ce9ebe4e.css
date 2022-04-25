@@ -1,0 +1,25 @@
+.about-section {
+    padding: 50px;
+    text-align: center;
+    background-color: rgb(108, 0, 0);
+    color: white;
+  }
+  .about-logo{
+      color: white;
+      font-size: 5vw;
+  }
+  .about-text{
+      text-align: left;
+    font-size: 25px;
+  }
+  .about-header{
+    text-align: left;
+    font-size: 35px;
+    font-weight: bold;
+  }
+  .about-team{
+      text-align: center;
+  }
+  .about-name{
+      padding: none;
+  }
