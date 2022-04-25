@@ -17,6 +17,7 @@ urlpatterns = [
     path('requestref/', RequestPage, name='requestref'),
     path('dashboard/', Dashboard, name='dashboard'),
     path('changepwd/', ChangePwd, name='changepwd'),
+    path('about/', aboutPage, name='about'),
 
     # Password reset by email
     path('password-reset/', ResetPasswordView.as_view(), name='password_reset'),
