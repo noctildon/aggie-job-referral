@@ -1,15 +1,31 @@
-<nav class="bg-dark navbar navbar-expand">
-    <a href="{% url 'home' %}">HOME</a>
-    <div class="navbar-collapse"></div>
-
-    {% if request.user.is_authenticated %}
-    <span class="user">Hello, {{request.user}} &nbsp;</span>
-    <span><a class="user" href="{% url 'logout' %}"> Logout</a></span>
-    {% else %}
-    <span><a class="user" href="{% url 'login' %}">Login</a></span>
-    <p>&nbsp;&nbsp;</p>
-    <span><a class="user" href="{% url 'registerrecruiter' %}">Recruiter registration</a></span>
-    <p>&nbsp;&nbsp;</p>
-    <span><a class="user" href="{% url 'registercandidate' %}">Candidate registration</a></span>
-    {% endif %}
-</nav>
+{% load static%}
+<head>
+    <link rel="stylesheet" href="{% static 'css/navbar.css' %}">
+</head>
+<nav class="navbar navbar-expand-lg navbar-light bg-light" style = "border-bottom: 3px solid maroon;">
+    <div class="container-fluid">
+        
+      <a class="navbar-brand logo-text" href="{% url 'home' %}"><i class="fa-solid fa-handshake logo"></i>&nbspAggie Job Referral</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavAltMarkup" aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+        <div class="navbar-nav">
+            
+            {% if request.user.is_authenticated %}
+            <a class="nav-link link-text">Hello, {{request.user}}</a>
+            <a class="nav-link link-text" style = "margin-left:40vw;" href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i>&nbspAbout</a>
+            <a class="nav-link link-text" style = "margin-left:0vw;" href="{% url 'dashboard' %}"><i class="fa-solid fa-gear"></i>&nbspSettings</a>
+            <a class="nav-link link-text" style = "margin-left:0vw;" href="{% url 'logout' %}"> <i class="fa-solid fa-right-from-bracket"></i>&nbspLog Out</a>
+            
+            {% else %}
+            <a class="nav-link link-text" style = "margin-left:20vw;" href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i>&nbspAbout</a>
+            <a class="nav-link link-text" style = "margin-left:0vw;" href="{% url 'login' %}"><i class="fa-solid fa-building"></i>&nbspCompany Login</a>
+            <a class="nav-link link-text" style = "margin-left:0vw;" href="{% url 'registerrecruiter' %}"><i class="fa-solid fa-user-tie"></i>&nbspRecruiter Registeration</a>
+            <a class="nav-link link-text" style = "margin-left:0vw;" href="{% url 'registercandidate' %}"><i class="fa-solid fa-user"></i>&nbspCandidate Registeration</a>
+            {% endif %}
+            
+        </div>
+      </div>
+    </div>
+  </nav>

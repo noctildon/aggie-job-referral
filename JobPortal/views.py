@@ -417,3 +417,6 @@ def sendEmail2candidate(candidate):
     print('subject:', subject)
     print('message:', message)
     print('email to', candidate.email)
+
+def aboutPage(request):
+    return render(request,'about.html')
