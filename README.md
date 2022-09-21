@@ -2,17 +2,18 @@
 
 ## How to make the project run locally
 0. Install WSL (windows only)
-1. Install git, python, and pip
+1. Install git, python3, and pip3
 2. git clone https://github.com/aggie-coding-club/aggie-job-referral (or use git pull if you've already downloaded)
 3. cd aggie-job-referral
-4. pip install -r requirements.txt
+4. pip3 install -r requirements.txt
 5. Remove db.sqlite3 (if exists)
-6. python manage.py migrate --run-syncdb
-7. python manage.py loaddata dump.json
-8. python manage.py runserver
-9. Open the url 127.0.0.1:8000 (or any url returned by the prompt)
+6. python3 manage.py migrate --run-syncdb
+7. python3 manage.py loaddata dump.json
+8. python3 manage.py runserver
+9. Create .env as described below
+10. Open the url 127.0.0.1:8000 (or any url returned by the prompt)
 
-* You may need to create a .env file in  aggie-job-referral/ (or AggieJobReferral/) with the content like
+* You may need to create a .env file in aggie-job-referral/ with the content like
 ```
 SECRET_KEY=AAAABBBBCCCCDDDD12341234=
 ```
