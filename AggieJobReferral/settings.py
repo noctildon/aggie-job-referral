@@ -29,7 +29,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 # set this true if running at local, false if running at heroku
-LOCAL_RUNNING = False
+LOCAL_RUNNING = True
 if LOCAL_RUNNING:
     load_dotenv()
     SECRET_KEY = os.getenv('SECRET_KEY')

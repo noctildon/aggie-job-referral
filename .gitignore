@@ -10,6 +10,7 @@ __pycache__/
 venv/
 
 members.json
+members.txt
 .vscode/
 mynote.txt
 media/

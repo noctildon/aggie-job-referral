@@ -6,7 +6,7 @@
 2. git clone https://github.com/aggie-coding-club/aggie-job-referral (or use git pull if you've already downloaded)
 3. cd aggie-job-referral
 4. pip install -r requirements.txt
-5. Remove db.sqlite3
+5. Remove db.sqlite3 (if exists)
 6. python manage.py migrate --run-syncdb
 7. python manage.py loaddata dump.json
 8. python manage.py runserver
@@ -34,7 +34,19 @@ see details at [creating-an-admin-user](https://docs.djangoproject.com/en/4.0/in
 
 
 ## Todos
+
+#### Frontend
+- [ ] Do filter to filter based on conditions
+- [ ] Beautify the page
+- [ ] Icon design
+
+#### Backend
+- [ ] Create dummy data for testing the filter
+- [ ] Set up the resume size 300KB
+- [ ] Find alternative of Heroku, then link to AWS s3
+- [ ] Write windows, linux env setup script
 - [ ] pressure test (unnecessary until a bottleneck is observed)
+
 
 
 ## **Before Deploy on heroku**
